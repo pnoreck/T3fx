@@ -1,4 +1,4 @@
-<pre><?php
+<?php
 /**
  * Created by PhpStorm.
  * User: Steffen Hastädt
