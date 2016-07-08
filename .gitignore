@@ -1,0 +1,10 @@
+# Created by .ignore support plugin (hsz.mobi)
+/inc/
+/mail_scan/
+/vendor/
+/webcam/
+/composer.lock
+/shoes.jpg
+/index.php
+/T3fx/config.php
+/T3fx/LocalConfig.php
