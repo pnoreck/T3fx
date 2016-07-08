@@ -1,0 +1,18 @@
+{
+    "name": "t3fx/mailscanner",
+    "description": "PHP script for scanning and sorting mails",
+    "require": {
+        "doctrine/dbal": "^2.5",
+        "php-imap/php-imap": "^2.0",
+        "intervention/image": "2.3.7",
+        "intervention/imagecache": "2.3.3",
+        "anlutro/curl": "1.4.2"
+    },
+    "license": "The MIT License (MIT)",
+    "authors": [
+        {
+            "name": "S. Hastädt",
+            "email": "sh@t3x.ch"
+        }
+    ]
+}
