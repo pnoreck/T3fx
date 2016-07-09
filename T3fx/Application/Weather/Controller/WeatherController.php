@@ -17,6 +17,14 @@ class WeatherController {
 	protected $WeatherRepository;
 
 	/**
+	 * WeatherController constructor.
+	 */
+	public function __construct () {
+		// Till we have in auto inject
+		$this->WeatherRepository = new \T3fx\Application\Weather\Domain\Repository\WeatherRepository();
+	}
+
+	/**
 	 * Index Action
 	 */
 	public function indexAction () {

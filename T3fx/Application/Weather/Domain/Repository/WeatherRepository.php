@@ -8,5 +8,7 @@
 
 namespace T3fx\Application\Weather\Domain\Repository;
 
-class WeatherRepository {
+class WeatherRepository extends \T3fx\Domain\Repository\StandardRepository{
+
+	
 }
