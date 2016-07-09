@@ -48,7 +48,7 @@ class Info extends \T3fx\Library\Pattern\Singleton {
 	 * @return array
 	 */
 	public function getPathInfo() {
-		$pathInfo = $_SERVER['REQUEST_URI'];
+		$pathInfo = current(explode('?', $_SERVER['REQUEST_URI']));
 
 		if(
 			preg_match('/^[a-zA-Z0-9\-\_\/]+\.[php|html].*$/', $pathInfo) ||

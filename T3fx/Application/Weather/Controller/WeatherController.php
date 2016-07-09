@@ -35,6 +35,15 @@ class WeatherController {
 	 */
 	public function getAction() {
 
+		// TODO: GET and POST parameters over processor method for secure request parameter handling
+		$time = $_GET["time"];
+		if(empty($time)) {
+			$time = time();
+		}
+		$weather = $this->WeatherRepository->getWeatherForTime($time);
+
+		// TODO: check, compile and return the result
+		echo $weather["json"];
 	}
 
 
