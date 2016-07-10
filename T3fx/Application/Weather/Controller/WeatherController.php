@@ -33,18 +33,32 @@ class WeatherController {
 	/**
 	 * Get action returns the weather information of the given time as JSON
 	 */
-	public function getAction() {
+	public function getAction () {
 
 		// TODO: GET and POST parameters over processor method for secure request parameter handling
 		$time = $_GET["time"];
-		if(empty($time)) {
+		if(empty( $time )) {
 			$time = time();
 		}
 		$weather = $this->WeatherRepository->getWeatherForTime($time);
+		$weatherObj = json_decode($weather["json"]);
 
-		// TODO: check, compile and return the result
-		echo $weather["json"];
+		$tempC = \T3fx\Library\Converter\Temperature::KelvinToCelsius($weatherObj->main->temp);
+		$tempF = \T3fx\Library\Converter\Temperature::CelsiusToFahrenheit($tempC);
+
+		$weatherArray = [
+			'city'        => $weatherObj->name,
+			'country'     => $weatherObj->sys->country,
+			'weather'     => get_object_vars(current($weatherObj->weather)),
+			'temperature' => [
+				'C' => $tempC,
+				'F' => $tempF,
+			],
+			'humidity'    => $weatherObj->main->humidity,
+			'wind'        => get_object_vars($weatherObj->wind),
+		    'dt'          => date('Y-m-d H:i:s', $weatherObj->dt),
+		];
+
+		return $weatherArray;
 	}
-
-
 }

@@ -60,7 +60,12 @@ class ApplicationController {
 		 * result of the controller. If the controller result is an array we will return this as json.
 		 */
 		if(method_exists($bootstrap, $action)) {
-			return $bootstrap->$action();
+			$result = $bootstrap->$action();
+			if(is_array($result)) {
+				header('Content-Type: application/json');
+				echo json_encode($result);
+				return;
+			}
 		}
 
 		return $this->indexAction();
