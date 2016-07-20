@@ -31,7 +31,7 @@ abstract class Singleton {
 
 		$calledClass = get_called_class();
 
-		if (!isset($instances[$calledClass])) {
+		if (!isset(self::$instances[$calledClass])) {
 			self::$instances[$calledClass] = new $calledClass();
 			if(method_exists(self::$instances[$calledClass], 'init')) {
 				self::$instances[$calledClass]->init();

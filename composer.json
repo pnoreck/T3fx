@@ -6,7 +6,9 @@
         "php-imap/php-imap": "^2.0",
         "intervention/image": "2.3.7",
         "intervention/imagecache": "2.3.3",
-        "anlutro/curl": "1.4.2"
+        "anlutro/curl": "1.4.2",
+        "bramus/router": "1.1",
+        "auth0/auth0-php": "3.4.0"
     },
     "license": "The MIT License (MIT)",
     "authors": [
