@@ -33,10 +33,19 @@ class DyndnsController {
 
 			\T3fx\Library\Connector\Http\Curl::Call($updateUrl);
 
-			echo 'New IP: ' . $currentIP;
+			return [
+				'new_ip' => $currentIP,
+				'old_ip' => $lastIP,
+				'status' => 'NEW',
+				'code'   => 300,
+			];
 		}
 		else {
-			echo 'Still good.';
+			return [
+				'old_ip' => $lastIP,
+				'status' => 'OK',
+				'code'   => 200,
+			];
 		}
 	}
 }
