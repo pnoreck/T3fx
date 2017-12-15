@@ -8,84 +8,104 @@
 
 namespace T3fx\Domain\Repository;
 
-class StandardRepository extends \T3fx\Library\Database\Doctrine\DBAL {
-	/**
-	 * @var string $tableName
-	 */
-	private $tableName;
+class StandardRepository extends \T3fx\Library\Database\Doctrine\DBAL
+{
+    /**
+     * @var string $tableName
+     */
+    private $tableName;
 
-	/**
-	 * Returns the table name of the repository. If not is the it will be generated out of the class name
-	 *
-	 * @return string
-	 */
-	protected function getTableName() {
-		if($this->tableName !== null)
-			return $this->tableName;
+    /**
+     * Returns the table name of the repository. If not is the it will be generated out of the class name
+     *
+     * @return string
+     */
+    protected function getTableName()
+    {
+        if ($this->tableName !== null) {
+            return $this->tableName;
+        }
 
-		$className = (new \ReflectionClass($this))->getShortName();
-		$this->tableName = strtolower('t3fx_'.preg_replace('/Repository$/', '', $className));
-		return $this->tableName;
-	}
+        $className       = (new \ReflectionClass($this))->getShortName();
+        $className       = preg_replace_callback(
+            '/([A-Z])/',
+            function ($hit) {
+                return '_' . strtolower($hit[0]);
+            },
+            $className
+        );
+        $this->tableName = strtolower(
+            't3fx_' . preg_replace('/_repository$/', '', $className)
+        );
 
-	/**
-	 * StandardRepository constructor.
-	 */
-	public function __construct () {
-		parent::__construct();
-		// $this->getTableName();
-	}
+        return trim($this->tableName, '_');
+    }
 
-	/**
-	 * @return \Doctrine\DBAL\Query\QueryBuilder
-	 */
-	protected function getQuery() {
-		return $this->conn->createQueryBuilder();
-	}
+    /**
+     * StandardRepository constructor.
+     *
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        // $this->getTableName();
+    }
 
-	/**
-	 * TODO: Does it make sense like this?
-	 *
-	 * @return \Doctrine\DBAL\Query\QueryBuilder
-	 */
-	protected function getSelectQuery() {
-		$query = $this->conn->createQueryBuilder();
-		$query->select('*');
-		$query->from($this->getTableName());
+    /**
+     * @return \Doctrine\DBAL\Query\QueryBuilder
+     */
+    protected function getQuery()
+    {
+        return $this->conn->createQueryBuilder();
+    }
 
-		return $query;
-	}
+    /**
+     * TODO: Does it make sense like this?
+     *
+     * @return \Doctrine\DBAL\Query\QueryBuilder
+     */
+    protected function getSelectQuery()
+    {
+        $query = $this->conn->createQueryBuilder();
+        $query->select('*');
+        $query->from($this->getTableName());
 
-	/**
-	 * Returns an insert query object
-	 *
-	 * @return \Doctrine\DBAL\Query\QueryBuilder
-	 */
-	protected function getInsertQuery() {
-		$query = $this->conn->createQueryBuilder();
-		$query->insert($this->getTableName());
+        return $query;
+    }
 
-		return $query;
-	}
+    /**
+     * Returns an insert query object
+     *
+     * @return \Doctrine\DBAL\Query\QueryBuilder
+     */
+    protected function getInsertQuery()
+    {
+        $query = $this->conn->createQueryBuilder();
+        $query->insert($this->getTableName());
 
-	/**
-	 * Select record by UID
-	 *
-	 * @param $uid
-	 *
-	 * @return mixed
-	 */
-	public function getByUid($uid) {
-		$query = $this->conn->createQueryBuilder();
+        return $query;
+    }
 
-		$query->select('*');
-		$query->from($this->getTableName());
+    /**
+     * Select record by UID
+     *
+     * @param $uid
+     *
+     * @return mixed
+     */
+    public function getByUid($uid)
+    {
+        $query = $this->conn->createQueryBuilder();
 
-		$query->where('uid = ?');
-		$query->setParameter(0, $uid);
+        $query->select('*');
+        $query->from($this->getTableName());
 
-		return $query->execute()->fetch();
+        $query->where('uid = ?');
+        $query->setParameter(0, $uid);
 
-	}
+        return $query->execute()->fetch();
+
+    }
 
 }
