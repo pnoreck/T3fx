@@ -17,4 +17,23 @@ namespace T3fx\Application\MailScanner\Domain\Repository;
 class BlackListRepository extends AbstractRepository
 {
 
+    /**
+     * @param string $mailFrom
+     * @param string $domain
+     *
+     * @return array|false
+     */
+    public function findBlacklistEntry($mailFrom, $domain)
+    {
+        $query = $this->conn->createQueryBuilder();
+        $query->select('uid, pid, mail, domain');
+        $query->from($this->getTableName());
+        $query->where('mail = ? OR domain = ?' . self::HIDDEN_FIELDS);
+        $query->setParameter(0, $mailFrom);
+        $query->setParameter(1, $domain);
+
+        return $query->execute()->fetch();
+    }
+
+
 }
