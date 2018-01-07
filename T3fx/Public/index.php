@@ -6,6 +6,10 @@
  * Time: 10:57
  */
 
+// If you want overwrite some constants you can do it in config.php
+if (is_file('../ConstConfig.php') && is_readable('../ConstConfig.php')) {
+    include('../ConstConfig.php');
+}
 require_once( '../autoload.php' );
 
 /**

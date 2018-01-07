@@ -15,6 +15,7 @@
 namespace T3fx\Application\MailScanner\Utility;
 
 use T3fx\Config;
+use T3fx\Library\Logging\File;
 use T3fx\Library\Pattern\Singleton;
 
 /**
@@ -48,8 +49,7 @@ class BlackListUtility extends Singleton
             $ipv4 = $hits[0];
 
         } else {
-            // TODO: implement logging
-            // var_dump($headerInfo[0]["Received"]);
+            File::log("Could not fine the IP in '" . $mailHeader[0]["Received"] . "'");
         }
 
         if (
@@ -79,7 +79,7 @@ class BlackListUtility extends Singleton
             $config = Config::getInstance();
             $rbls   = $config->getApplicationConfig('MailScanner', 'DNSBL');
 
-            if(
+            if (
                 !is_array($rbls) ||
                 !array_key_exists('blacklists', $rbls) || !is_array($rbls['blacklists']) || !$rbls['blacklists']
             ) {
@@ -89,6 +89,14 @@ class BlackListUtility extends Singleton
         }
 
         $dnsbl = new \DNSBL\DNSBL($rbls);
-        return $dnsbl->isListed($ipv4);
+        if ($dnsbl->isListed($ipv4)) {
+            $blackLists = $dnsbl->getListingBlacklists($ipv4);
+            File::log(
+                "IP '" . $ipv4 . "' found in the following blacklists: " . print_r($blackLists, true)
+            );
+            return true;
+        }
+
+        return false;
     }
 }

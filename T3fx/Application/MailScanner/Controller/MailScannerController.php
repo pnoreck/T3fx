@@ -88,7 +88,6 @@ class MailScannerController extends AbstractActionController
      */
     public function scanAction()
     {
-
         $mailsIds = $this->getMailIDs();
         foreach ($mailsIds as $mailId) {
             $mail = $this->mailbox->getMail($mailId, false);
@@ -109,8 +108,7 @@ class MailScannerController extends AbstractActionController
                 continue;
             }
 
-
-            $this->database->createUndefinedSender($mail->fromAddress);
+            $this->senderRepository->createUndefinedSender($mail->fromAddress);
         }
     }
 
@@ -125,7 +123,7 @@ class MailScannerController extends AbstractActionController
         // Read all messaged into an array:
         $mailsIds = $this->mailbox->searchMailbox('ALL');
         if (!$mailsIds) {
-            die('empty');
+            die();
         }
 
         // If we found mails we need the repositories

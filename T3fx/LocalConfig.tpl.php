@@ -64,7 +64,6 @@ return [
                 'DNSBL'     => [
                     'sbl-xbl.spamhaus.org',
                     'all.rbl.webiron.net',
-                    'rbl.iprange.net',
                     'bl.spamcop.net',
                 ],
             ],

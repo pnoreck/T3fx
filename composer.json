@@ -7,14 +7,12 @@
     "intervention/image": "2.3.7",
     "intervention/imagecache": "2.3.3",
     "anlutro/curl": "1.4.2",
-    "bramus/router": "1.1",
-    "auth0/auth0-php": "3.4.0",
     "jbboehr/dnsbl": "0.1.*"
   },
   "license": "The MIT License (MIT)",
   "authors": [
     {
-      "name": "S. Hastädt",
+      "name": "Steffen Hastädt",
       "email": "sh@t3x.ch"
     }
   ]

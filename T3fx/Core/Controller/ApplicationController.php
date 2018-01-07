@@ -71,7 +71,7 @@ class ApplicationController
             }
         }
 
-        return $this->indexAction();
+        $this->indexAction();
     }
 
     /**
@@ -81,6 +81,8 @@ class ApplicationController
      */
     public function indexAction()
     {
-        echo 'Standard-indexAction';
+        // TODO: Render HTML page / implement view+template actions
+        // TODO: Rendering engine Twig?
+        // echo 'Standard-indexAction';
     }
 }

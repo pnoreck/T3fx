@@ -7,24 +7,27 @@
  */
 chdir(__DIR__);
 require_once '../vendor/autoload.php';
-defined('DOCUMENT_ROOT') OR define('DOCUMENT_ROOT', __DIR__.'/');
 
-spl_autoload_register(function($classname) {
+defined('DOCUMENT_ROOT') OR define('DOCUMENT_ROOT', __DIR__ . '/');
+defined('TABLE_PREFIX') OR define('TABLE_PREFIX', 't3fx_');
 
-	// If we are responsible for this class we have to search at more then one place
-	if(preg_match('/^\/?T3fx.*/', $classname)) {
-		$search = [];
-		$search[] = preg_replace('/^\/?T3fx\\\/', '', $classname);
-		$search[] = preg_replace('/^\/?T3fx\\\/', 'Core/', $classname);
-	}
-	else {
-		return false;
-	}
+spl_autoload_register(
+    function ($classname) {
 
-	foreach($search as $name) {
-		$file_name = __DIR__.'/'.str_replace('\\', '/', $name).'.php';
-		if(is_file($file_name) && is_readable($file_name)) {
-			require_once($file_name);
-		}
-	}
-});
+        // If we are responsible for this class we have to search at more then one place
+        if (preg_match('/^\/?T3fx.*/', $classname)) {
+            $search   = [];
+            $search[] = preg_replace('/^\/?T3fx\\\/', '', $classname);
+            $search[] = preg_replace('/^\/?T3fx\\\/', 'Core/', $classname);
+        } else {
+            return false;
+        }
+
+        foreach ($search as $name) {
+            $file_name = __DIR__ . '/' . str_replace('\\', '/', $name) . '.php';
+            if (is_file($file_name) && is_readable($file_name)) {
+                require_once($file_name);
+            }
+        }
+    }
+);
