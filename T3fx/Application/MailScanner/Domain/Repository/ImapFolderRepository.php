@@ -35,17 +35,20 @@ class ImapFolderRepository extends AbstractRepository
     }
 
     /**
-     * @param $folderNname string
+     * Find folder by full folder name
+     *
+     * @param string $fullNname
+     * @param bool   $ignoreHiddenFields
      *
      * @return mixed
      */
-    public function getByName($folderNname, $ignoreHiddenFields = false)
+    public function getByName($fullNname, $ignoreHiddenFields = false)
     {
         $query = $this->conn->createQueryBuilder();
         $query->select('*');
         $query->from($this->getTableName());
         $query->where('full_name = ?' . (($ignoreHiddenFields) ? '' : self::HIDDEN_FIELDS));
-        $query->setParameter(0, $folderNname);
+        $query->setParameter(0, $fullNname);
 
         return $query->execute()->fetch();
     }

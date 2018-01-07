@@ -31,7 +31,7 @@ class AbstractRepository extends \T3fx\Domain\Repository\StandardRepository
      *
      * @return \Doctrine\DBAL\Driver\Statement|int
      */
-    protected function updateTable($what, $where)
+    protected function update($what, $where)
     {
         return parent::updateTable(
             $this->getTableName(),

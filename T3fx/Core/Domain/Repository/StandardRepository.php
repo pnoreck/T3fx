@@ -35,7 +35,7 @@ class StandardRepository extends \T3fx\Library\Database\Doctrine\DBAL
             $className
         );
         $this->tableName = strtolower(
-            't3fx_' . preg_replace('/_repository$/', '', $className)
+            't3fx_' . trim(preg_replace('/_repository$/', '', $className), '_')
         );
 
         return trim($this->tableName, '_');

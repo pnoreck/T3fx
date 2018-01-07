@@ -10,11 +10,11 @@
 namespace T3fx\Application\MailScanner\Domain\Repository;
 
 /**
- * Class BlackListRepository
+ * Class BlacklistRepository
  *
  * @package T3fx\Application\MailScanner\Domain\Repository
  */
-class BlackListRepository extends AbstractRepository
+class BlacklistRepository extends AbstractRepository
 {
 
     /**

@@ -8,6 +8,8 @@
 
 namespace T3fx\Library\Database\Doctrine;
 
+use T3fx\Config;
+
 class DBAL
 {
 
@@ -22,20 +24,9 @@ class DBAL
      */
     public function __construct()
     {
-
         $config           = new \Doctrine\DBAL\Configuration();
-        $connectionParams = [
-            'dbname'   => '',
-            'user'     => '',
-            'password' => '',
-            'host'     => '',
-            'driver'   => '',
-        ];
-
-        include(DOCUMENT_ROOT . 'config.php');
-        $connectionParams = $connectionParams["database"];
-
-        $this->conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
+        $connectionParams = Config::getInstance()->getDatabaseConfig();
+        $this->conn       = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
     }
 
 

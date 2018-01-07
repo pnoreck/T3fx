@@ -8,44 +8,42 @@
 
 namespace T3fx\Application\DynDNS\Controller;
 
-class DyndnsController {
-	/**
-	 * Index Action
-	 */
-	public function indexAction () {
-	}
+use T3fx\Core\Controller\AbstractActionController;
 
-	/**
-	 * Check Action is called by cronjob that we have always the current ip from home
-	 */
-	public function CheckAction () {
+class DyndnsController extends AbstractActionController
+{
 
-		$file = DOCUMENT_ROOT . 'Temp/currentip.txt';
-		$currentIP = $_SERVER["REMOTE_ADDR"];
-		$lastIP = trim(file_get_contents($file));
+    /**
+     * Check Action is called by cronjob that we have always the current ip from home
+     */
+    public function CheckAction()
+    {
 
-		if($lastIP != $currentIP) {
+        $file      = DOCUMENT_ROOT . 'Temp/currentip.txt';
+        $currentIP = $_SERVER["REMOTE_ADDR"];
+        $lastIP    = trim(file_get_contents($file));
 
-			file_put_contents($file, $currentIP);
+        if ($lastIP != $currentIP) {
 
-			$updateUrl = \T3fx\Config::getInstance()->getApplicationConfig('DynDNS', 'UpdateUrl');
-			$updateUrl = str_replace('{new_ip}', $currentIP, $updateUrl);
+            file_put_contents($file, $currentIP);
 
-			\T3fx\Library\Connector\Http\Curl::Call($updateUrl);
+            $updateUrl = \T3fx\Config::getInstance()->getApplicationConfig('DynDNS', 'UpdateUrl');
+            $updateUrl = str_replace('{new_ip}', $currentIP, $updateUrl);
 
-			return [
-				'new_ip' => $currentIP,
-				'old_ip' => $lastIP,
-				'status' => 'NEW',
-				'code'   => 300,
-			];
-		}
-		else {
-			return [
-				'old_ip' => $lastIP,
-				'status' => 'OK',
-				'code'   => 200,
-			];
-		}
-	}
+            \T3fx\Library\Connector\Http\Curl::Call($updateUrl);
+
+            return [
+                'new_ip' => $currentIP,
+                'old_ip' => $lastIP,
+                'status' => 'NEW',
+                'code'   => 300,
+            ];
+        } else {
+            return [
+                'old_ip' => $lastIP,
+                'status' => 'OK',
+                'code'   => 200,
+            ];
+        }
+    }
 }
