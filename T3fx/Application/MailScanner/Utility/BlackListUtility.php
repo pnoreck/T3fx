@@ -14,6 +14,7 @@
 
 namespace T3fx\Application\MailScanner\Utility;
 
+use T3fx\Config;
 use T3fx\Library\Pattern\Singleton;
 
 /**
@@ -42,45 +43,52 @@ class BlackListUtility extends Singleton
 
         if (preg_match('/\([^[:space:]]+ ([a-z0-9\-\.]+)\)/i', $mailHeader[0]["Received"], $hits)) {
             $ipv4 = gethostbyname($hits[1]);
+
         } elseif (preg_match('/[0-9]{1,3}(\.[0-9]{1,3}){3}/i', $mailHeader[0]["Received"], $hits)) {
             $ipv4 = $hits[0];
+
         } else {
             // TODO: implement logging
             // var_dump($headerInfo[0]["Received"]);
         }
 
-        if (preg_match('/^[0-9]{1,3}(\.[0-9]{1,3}){3}$/i', $ipv4)) {
-
-            if (
-                $this->isBlacklistedIPv4($ipv4, 'sbl-xbl.spamhaus.org')
-                || $this->isBlacklistedIPv4($ipv4, 'all.rbl.webiron.net')
-                // || $this->isBlacklistedIPv4($ipv4, 'rbl.iprange.net')
-            ) {
-                return true;
-            }
+        if (
+            preg_match('/^[0-9]{1,3}(\.[0-9]{1,3}){3}$/i', $ipv4) &&
+            $this->isIPv4Blacklisted($ipv4)
+        ) {
+            return true;
         }
 
         return false;
     }
 
+
     /**
-     * Check the given IPv4 address against the given rbl
+     * Check the given IPv4 against the configured blacklists
      *
-     * @param $ip
-     * @param $rbl
+     * @param $ipv4
      *
      * @return bool
+     * @throws \Exception
      */
-    private function isBlacklistedIPv4($ip, $rbl)
+    protected function isIPv4Blacklisted($ipv4)
     {
-        if (!isset($this->rplIPs[$rbl])) {
-            $this->rplIPs[$rbl] = gethostbyname($rbl);
+        static $rbls;
+        if (!$rbls) {
+            /** @var \T3fx\Config $config */
+            $config = Config::getInstance();
+            $rbls   = $config->getApplicationConfig('MailScanner', 'DNSBL');
+
+            if(
+                !is_array($rbls) ||
+                !array_key_exists('blacklists', $rbls) || !is_array($rbls['blacklists']) || !$rbls['blacklists']
+            ) {
+                throw new \Exception('DNSBL blacklists are not configured.');
+            }
+
         }
 
-        $rev    = array_reverse(explode('.', $ip));
-        $lookup = implode('.', $rev) . '.' . $rbl;
-        $result = gethostbyname($lookup);
-
-        return ($this->rplIPs[$rbl] != $result);
+        $dnsbl = new \DNSBL\DNSBL($rbls);
+        return $dnsbl->isListed($ipv4);
     }
 }
