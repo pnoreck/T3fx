@@ -33,8 +33,10 @@ class DBAL
     /**
      * Insert array into table
      *
-     * @param $table       string
-     * @param $insertArray array
+     * @param string $table
+     * @param array  $insertArray
+     *
+     * @return \Doctrine\DBAL\Driver\Statement|int
      */
     public function insertArray($table, $insertArray)
     {
@@ -46,7 +48,7 @@ class DBAL
             $query->setParameter($i, $value);
             $i++;
         }
-        $query->execute();
+        return $query->execute();
     }
 
     /**

@@ -35,10 +35,34 @@ class AbstractRepository extends \T3fx\Domain\Repository\StandardRepository
     {
         return parent::updateTable(
             $this->getTableName(),
-            $what,
+            array_merge(
+                [
+                    'tstamp' => time()
+                ],
+                $what
+            ),
             $where
         );
     }
 
+    protected function insert($array)
+    {
+        return parent::insertArray(
+            $this->getTableName(),
+            array_merge(
+                [
+                    'pid'       => 46,
+                    'cruser_id' => 0,
+                    'hidden'    => 0,
+                    'deleted'   => 0,
+                    'tstamp'    => time(),
+                    'crdate'    => time(),
+                    'starttime' => 0,
+                    'endtime'   => 0,
+                ],
+                $array
+            )
+        );
+    }
 
 }

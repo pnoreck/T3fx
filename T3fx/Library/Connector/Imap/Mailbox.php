@@ -71,7 +71,7 @@ class Mailbox extends \PhpImap\Mailbox
      * @param        $mail_id
      * @param string $folder
      */
-    public function moveMailToFolder($mail_id, $folder = 'INBOX/Junk')
+    public function moveMailToFolder($mail_id, $folder)
     {
         $imapresult = imap_mail_move($this->getImapStream(), $mail_id, $folder, CP_UID);
         if (!$imapresult) {

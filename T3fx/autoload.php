@@ -9,7 +9,6 @@ chdir(__DIR__);
 require_once '../vendor/autoload.php';
 
 defined('DOCUMENT_ROOT') OR define('DOCUMENT_ROOT', __DIR__ . '/');
-defined('TABLE_PREFIX') OR define('TABLE_PREFIX', 't3fx_');
 
 spl_autoload_register(
     function ($classname) {

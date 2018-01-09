@@ -9,9 +9,6 @@
 
 namespace T3fx\Application\MailScanner\Controller;
 
-use T3fx\Application\MailScanner\Domain\Repository\BlacklistRepository;
-use T3fx\Application\MailScanner\Domain\Repository\ImapFolderRepository;
-use T3fx\Application\MailScanner\Domain\Repository\SenderRepository;
 use T3fx\Application\MailScanner\Utility\BlackListUtility;
 use T3fx\Core\Controller\AbstractActionController;
 
@@ -45,6 +42,14 @@ class MailScannerController extends AbstractActionController
     var $blacklistRepository;
 
     /**
+     * ContentFilterRepository
+     *
+     * @var \T3fx\Application\MailScanner\Domain\Repository\ContentFilterRepository
+     */
+    var $contentFilterRepository;
+
+
+    /**
      * @var \T3fx\Imap\Mailbox
      */
     var $mailbox;
@@ -55,8 +60,9 @@ class MailScannerController extends AbstractActionController
     public function __construct()
     {
         /** @var \T3fx\Config $config */
-        $config    = \T3fx\Config::getInstance();
-        $mailboxes = $config->getApplicationConfig('MailScanner', 'MailBoxes');
+        $config = \T3fx\Config::getInstance();
+        // $mailboxes = $config->getApplicationConfig('MailScanner', 'MailBoxes');
+        $mailboxes = $config->getApplicationConfig('MailScanner', 'SpamBoxes');
 
         // TODO: We only scan one mailbox at the moment
         $mailbox = reset($mailboxes);
@@ -74,11 +80,15 @@ class MailScannerController extends AbstractActionController
      *
      * @return void
      */
-    protected function initRepositories()
+    protected function initRepositories($repositories = ['sender', 'imapFolder', 'blacklist', 'contentFilter'])
     {
-        $this->senderRepository     = new SenderRepository();
-        $this->imapFolderRepository = new ImapFolderRepository();
-        $this->blacklistRepository  = new BlacklistRepository();
+        foreach ($repositories as $repository) {
+            $varname = $repository . 'Repository';
+            if (property_exists($this, $varname) && !$this->$varname) {
+                $className      = '\\T3fx\\Application\\MailScanner\\Domain\\Repository\\' . ucfirst($varname);
+                $this->$varname = new  $className();
+            }
+        }
     }
 
     /**
@@ -91,6 +101,7 @@ class MailScannerController extends AbstractActionController
         $mailsIds = $this->getMailIDs();
         foreach ($mailsIds as $mailId) {
             $mail = $this->mailbox->getMail($mailId, false);
+            $this->checkForContentFilter($mail);
 
             $folder = $this->findFolderBySender($mail->fromAddress);
             if (is_string($folder) && !empty($folder)) {
@@ -99,13 +110,19 @@ class MailScannerController extends AbstractActionController
             }
 
             if ($this->checkAgainstPrivateBlacklist($mail->fromAddress)) {
-                $this->mailbox->moveMailToFolder($mailId, 'INBOX/Junk');
+                $this->mailbox->moveMailToFolder($mailId, JUNK_FOLDER);
+                $this->checkForContentFilter($mail);
                 continue;
             }
 
             if ($this->checkAgainstPublicBlacklist($mailId)) {
-                $this->mailbox->moveMailToFolder($mailId, 'INBOX/Junk');
+                $this->mailbox->moveMailToFolder($mailId, JUNK_FOLDER);
+                $this->checkForContentFilter($mail);
                 continue;
+            }
+
+            if ($this->checkAgainstContentFilter($mail)) {
+                $this->mailbox->moveMailToFolder($mailId, JUNK_FOLDER);
             }
 
             $this->senderRepository->createUndefinedSender($mail->fromAddress);
@@ -127,7 +144,7 @@ class MailScannerController extends AbstractActionController
         }
 
         // If we found mails we need the repositories
-        $this->initRepositories();
+        $this->initRepositories(['sender', 'imapFolder', 'blacklist']);
 
         return $mailsIds;
     }
@@ -175,12 +192,55 @@ class MailScannerController extends AbstractActionController
 
     }
 
+    /**
+     * Check the mail with the given mail ID against the configured DNSBLs
+     *
+     * @param int $mailId
+     *
+     * @return bool
+     */
     protected function checkAgainstPublicBlacklist($mailId)
     {
         /** @var BlackListUtility $blacklistUtility */
         $blacklistUtility = BlackListUtility::getInstance();
         $mailHeader       = $this->mailbox->getImapHeaderInfo($mailId);
         return $blacklistUtility->checkAgainstPublicBlacklist($mailHeader);
+    }
+
+
+    /**
+     * Check if the header of the given mail is already in the content filter otherwise add it
+     *
+     * @param \PhpImap\IncomingMail $mail
+     *
+     * @return void
+     */
+    protected function checkForContentFilter($mail)
+    {
+        $this->initRepositories(['contentFilter']);
+        $subject = $mail->subject;
+        $sha1    = sha1($subject);
+
+        if (!$this->contentFilterRepository->findSubjectBySha1($sha1)) {
+            $this->contentFilterRepository->addSubject($subject, $sha1);
+        }
+    }
+
+    /**
+     * Check the given mail if it has a match with the content filter
+     *
+     * @param \PhpImap\IncomingMail $mail
+     *
+     * @return bool
+     */
+    protected function checkAgainstContentFilter($mail)
+    {
+        $this->initRepositories(['contentFilter']);
+        $subject = $mail->subject;
+        $sha1    = sha1($subject);
+        $result  = $this->contentFilterRepository->findSubjectBySha1($sha1);
+
+        return (is_array($result) && $result);
     }
 
 }
