@@ -66,20 +66,6 @@ class MailScannerController extends AbstractActionController
      */
     public function __construct()
     {
-        /** @var \T3fx\Config $config */
-        $config = \T3fx\Config::getInstance();
-        // $mailboxes = $config->getApplicationConfig('MailScanner', 'MailBoxes');
-        $mailboxes = $config->getApplicationConfig('MailScanner', 'SpamBoxes');
-
-        // TODO: We only scan one mailbox at the moment
-        $mailbox = reset($mailboxes);
-
-        $this->mailbox = new \T3fx\Library\Connector\Imap\Mailbox(
-            '{' . $mailbox["host"] . ':993/imap/ssl}INBOX',
-            $mailbox["user"],
-            $mailbox["password"],
-            __DIR__
-        );
     }
 
     /**
@@ -105,6 +91,20 @@ class MailScannerController extends AbstractActionController
      */
     public function scanAction()
     {
+        /** @var \T3fx\Config $config */
+        $config    = \T3fx\Config::getInstance();
+        $mailboxes = $config->getApplicationConfig('MailScanner', 'MailBoxes');
+
+        // TODO: We only scan one mailbox at the moment
+        $mailbox = reset($mailboxes);
+
+        $this->mailbox = new \T3fx\Library\Connector\Imap\Mailbox(
+            '{' . $mailbox["host"] . ':993/imap/ssl}' . $mailbox["folder"],
+            $mailbox["user"],
+            $mailbox["password"],
+            __DIR__
+        );
+
         $mailsIds = $this->getMailIDs();
         foreach ($mailsIds as $mailId) {
 
@@ -142,6 +142,38 @@ class MailScannerController extends AbstractActionController
             // an entry in the sender list so that the user can assign it to an folder
             $this->senderRepository->createUndefinedSender($mail->fromAddress);
         }
+
+        $this->mailbox->disconnect();
+    }
+
+
+    public function scanSpamBoxAction()
+    {
+        /** @var \T3fx\Config $config */
+        $config    = \T3fx\Config::getInstance();
+        $mailboxes = $config->getApplicationConfig('MailScanner', 'SpamBoxes');
+        foreach ($mailboxes as $mailbox) {
+            $this->mailbox = new \T3fx\Library\Connector\Imap\Mailbox(
+                '{' . $mailbox["host"] . ':993/imap/ssl}' . $mailbox["folder"],
+                $mailbox["user"],
+                $mailbox["password"],
+                __DIR__
+            );
+            $this->scanSpam();
+            $this->mailbox->disconnect();
+        }
+    }
+
+    protected function scanSpam()
+    {
+        $mailsIds = $this->getMailIDs();
+        foreach ($mailsIds as $mailId) {
+            // Get the mail
+            $mail = $this->mailbox->getMail($mailId, false);
+            $this->checkForContentFilter($mail);
+            $this->checkForSenderBlacklist($mail->fromAddress);
+            $this->mailbox->moveMailToFolder($mailId, JUNK_FOLDER);
+        }
     }
 
 
@@ -155,6 +187,7 @@ class MailScannerController extends AbstractActionController
         // Read all messaged into an array:
         $mailsIds = $this->mailbox->searchMailbox('ALL');
         if (!$mailsIds) {
+            $this->mailbox->disconnect();
             die();
         }
 
@@ -274,7 +307,7 @@ class MailScannerController extends AbstractActionController
         $domain = explode('@', $sender);
         $domain = end($domain);
         if (!$this->blacklistRepository->findBlacklistEntry($sender, $domain)) {
-            if(!$this->whitelistRepository->findByName($domain)) {
+            if (!$this->whitelistRepository->findByName($domain)) {
                 $this->blacklistRepository->addDomainToBlacklist($domain);
             } else {
                 $this->blacklistRepository->addSenderToBlacklist($domain);
