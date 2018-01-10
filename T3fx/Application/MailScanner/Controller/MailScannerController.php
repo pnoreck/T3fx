@@ -48,6 +48,13 @@ class MailScannerController extends AbstractActionController
      */
     var $contentFilterRepository;
 
+    /**
+     * WhitelistRepository
+     *
+     * @var \T3fx\Application\MailScanner\Domain\Repository\WhitelistRepository
+     */
+    var $whitelistRepository;
+
 
     /**
      * @var \T3fx\Imap\Mailbox
@@ -76,7 +83,7 @@ class MailScannerController extends AbstractActionController
     }
 
     /**
-     *
+     * Initialize the required repositories
      *
      * @return void
      */
@@ -100,31 +107,39 @@ class MailScannerController extends AbstractActionController
     {
         $mailsIds = $this->getMailIDs();
         foreach ($mailsIds as $mailId) {
-            $mail = $this->mailbox->getMail($mailId, false);
-            $this->checkForContentFilter($mail);
 
+            // Get the mail
+            $mail = $this->mailbox->getMail($mailId, false);
+
+            // Check if the mail is a "good" one and we have to move it in a folder
             $folder = $this->findFolderBySender($mail->fromAddress);
             if (is_string($folder) && !empty($folder)) {
                 $this->mailbox->moveMailToFolder($mailId, $folder);
                 continue;
             }
 
+            // Check against a public blacklist if it's spam
             if ($this->checkAgainstPrivateBlacklist($mail->fromAddress)) {
                 $this->mailbox->moveMailToFolder($mailId, JUNK_FOLDER);
                 $this->checkForContentFilter($mail);
                 continue;
             }
 
+            // Check against our local playlist if it's spam
             if ($this->checkAgainstPublicBlacklist($mailId)) {
                 $this->mailbox->moveMailToFolder($mailId, JUNK_FOLDER);
                 $this->checkForContentFilter($mail);
                 continue;
             }
 
+            // Check against our local content filter if we marked it as spam
             if ($this->checkAgainstContentFilter($mail)) {
+                $this->checkForSenderBlacklist($mail->fromAddress);
                 $this->mailbox->moveMailToFolder($mailId, JUNK_FOLDER);
             }
 
+            // We have an unidentified sender and we think it's not spam. That's why we make
+            // an entry in the sender list so that the user can assign it to an folder
             $this->senderRepository->createUndefinedSender($mail->fromAddress);
         }
     }
@@ -221,6 +236,9 @@ class MailScannerController extends AbstractActionController
         $subject = $mail->subject;
         $sha1    = sha1($subject);
 
+        // We remove weird icons from the string which could make problems in the database
+        $subject = preg_replace('/[^\p{L}\p{N}\s]/u', '', $subject);
+
         if (!$this->contentFilterRepository->findSubjectBySha1($sha1)) {
             $this->contentFilterRepository->addSubject($subject, $sha1);
         }
@@ -241,6 +259,27 @@ class MailScannerController extends AbstractActionController
         $result  = $this->contentFilterRepository->findSubjectBySha1($sha1);
 
         return (is_array($result) && $result);
+    }
+
+    /**
+     * Check if we have to add the sender to the blacklist
+     *
+     * @param $sender
+     *
+     * @return void
+     */
+    protected function checkForSenderBlacklist($sender)
+    {
+        $this->initRepositories(['blacklist', 'whitelist']);
+        $domain = explode('@', $sender);
+        $domain = end($domain);
+        if (!$this->blacklistRepository->findBlacklistEntry($sender, $domain)) {
+            if(!$this->whitelistRepository->findByName($domain)) {
+                $this->blacklistRepository->addDomainToBlacklist($domain);
+            } else {
+                $this->blacklistRepository->addSenderToBlacklist($domain);
+            }
+        }
     }
 
 }

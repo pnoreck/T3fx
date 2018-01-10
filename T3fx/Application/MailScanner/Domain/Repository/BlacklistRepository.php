@@ -18,6 +18,8 @@ class BlacklistRepository extends AbstractRepository
 {
 
     /**
+     * Find a blacklist entry with the given email address or domain
+     *
      * @param string $mailFrom
      * @param string $domain
      *
@@ -33,6 +35,40 @@ class BlacklistRepository extends AbstractRepository
         $query->setParameter(1, $domain);
 
         return $query->execute()->fetch();
+    }
+
+    /**
+     * Add a whole domain to the blacklist
+     *
+     * @param $domain
+     *
+     * @return void
+     */
+    public function addDomainToBlacklist($domain)
+    {
+        $this->insert(
+            [
+                'domain' => $domain,
+                'mail'   => '',
+            ]
+        );
+    }
+
+    /**
+     * Add only an email address to the blacklist
+     *
+     * @param $sender
+     *
+     * @return void
+     */
+    public function addSenderToBlacklist($sender)
+    {
+        $this->insert(
+            [
+                'domain' => '',
+                'mail'   => $sender,
+            ]
+        );
     }
 
 

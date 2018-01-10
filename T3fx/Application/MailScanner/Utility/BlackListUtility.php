@@ -50,6 +50,7 @@ class BlackListUtility extends Singleton
 
         } else {
             File::log("Could not fine the IP in '" . $mailHeader[0]["Received"] . "'");
+            return false;
         }
 
         if (
