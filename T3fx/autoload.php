@@ -8,8 +8,6 @@
 chdir(__DIR__);
 require_once '../vendor/autoload.php';
 
-defined('DOCUMENT_ROOT') OR define('DOCUMENT_ROOT', __DIR__ . '/');
-
 spl_autoload_register(
     function ($classname) {
 

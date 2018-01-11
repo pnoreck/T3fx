@@ -107,10 +107,11 @@ class MailScannerController extends AbstractActionController
             '{' . $mailbox["host"] . ':993/imap/ssl}' . $mailbox["folder"],
             $mailbox["user"],
             $mailbox["password"],
-            __DIR__
+            TEMP_FOLDER
         );
         $this->spamFolder = $mailbox["target"];
         $this->sortMails();
+        $this->scanSpamBoxAction();
     }
 
     /**
@@ -120,8 +121,11 @@ class MailScannerController extends AbstractActionController
      */
     protected function sortMails()
     {
-        $mailsIds = $this->getMailIDs();
-        foreach ($mailsIds as $mailId) {
+        $mailIds = $this->getMailIDs();
+        if (!is_array($mailIds) || !$mailIds) {
+            return false;
+        }
+        foreach ($mailIds as $mailId) {
 
             // Get the mail
             $mail = $this->mailbox->getMail($mailId, false);
@@ -172,7 +176,7 @@ class MailScannerController extends AbstractActionController
                 '{' . $mailbox["host"] . ':993/imap/ssl}' . $mailbox["folder"],
                 $mailbox["user"],
                 $mailbox["password"],
-                __DIR__
+                TEMP_FOLDER
             );
             $this->spamFolder = $mailbox["target"];
             $this->scanSpam();
@@ -180,9 +184,18 @@ class MailScannerController extends AbstractActionController
         }
     }
 
+    /**
+     * The current mailbox is a spam folder. We analyse all mails and fill the blacklists with the content
+     *
+     * @return bool
+     */
     protected function scanSpam()
     {
         $mailsIds = $this->getMailIDs();
+        if (!$mailsIds) {
+            return false;
+        }
+
         foreach ($mailsIds as $mailId) {
             // Get the mail
             $mail = $this->mailbox->getMail($mailId, false);
@@ -196,7 +209,7 @@ class MailScannerController extends AbstractActionController
     /**
      * Return all Mail IDs from the inbox or die
      *
-     * @return array
+     * @return array|bool
      */
     protected function getMailIDs()
     {
@@ -204,7 +217,7 @@ class MailScannerController extends AbstractActionController
         $mailsIds = $this->mailbox->searchMailbox('ALL');
         if (!$mailsIds) {
             $this->mailbox->disconnect();
-            die();
+            return false;
         }
 
         // If we found mails we need the repositories

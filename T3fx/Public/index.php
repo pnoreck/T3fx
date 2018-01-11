@@ -10,6 +10,7 @@
 if (is_file('../ConstConfig.php') && is_readable('../ConstConfig.php')) {
     include('../ConstConfig.php');
 }
+
 require_once( '../autoload.php' );
 
 /**
