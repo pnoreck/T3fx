@@ -62,6 +62,11 @@ class MailScannerController extends AbstractActionController
     var $mailbox;
 
     /**
+     * @var string
+     */
+    var $spamFolder = 'INBOX/Junk';
+
+    /**
      * Scanner constructor.
      */
     public function __construct()
@@ -98,13 +103,23 @@ class MailScannerController extends AbstractActionController
         // TODO: We only scan one mailbox at the moment
         $mailbox = reset($mailboxes);
 
-        $this->mailbox = new \T3fx\Library\Connector\Imap\Mailbox(
+        $this->mailbox    = new \T3fx\Library\Connector\Imap\Mailbox(
             '{' . $mailbox["host"] . ':993/imap/ssl}' . $mailbox["folder"],
             $mailbox["user"],
             $mailbox["password"],
             __DIR__
         );
+        $this->spamFolder = $mailbox["target"];
+        $this->sortMails();
+    }
 
+    /**
+     * Scan the mailbox for mails, chack for spam and sort the rest
+     *
+     * @return void
+     */
+    protected function sortMails()
+    {
         $mailsIds = $this->getMailIDs();
         foreach ($mailsIds as $mailId) {
 
@@ -120,14 +135,14 @@ class MailScannerController extends AbstractActionController
 
             // Check against a public blacklist if it's spam
             if ($this->checkAgainstPrivateBlacklist($mail->fromAddress)) {
-                $this->mailbox->moveMailToFolder($mailId, JUNK_FOLDER);
+                $this->mailbox->moveMailToFolder($mailId, $this->spamFolder);
                 $this->checkForContentFilter($mail);
                 continue;
             }
 
             // Check against our local playlist if it's spam
             if ($this->checkAgainstPublicBlacklist($mailId)) {
-                $this->mailbox->moveMailToFolder($mailId, JUNK_FOLDER);
+                $this->mailbox->moveMailToFolder($mailId, $this->spamFolder);
                 $this->checkForContentFilter($mail);
                 continue;
             }
@@ -135,7 +150,7 @@ class MailScannerController extends AbstractActionController
             // Check against our local content filter if we marked it as spam
             if ($this->checkAgainstContentFilter($mail)) {
                 $this->checkForSenderBlacklist($mail->fromAddress);
-                $this->mailbox->moveMailToFolder($mailId, JUNK_FOLDER);
+                $this->mailbox->moveMailToFolder($mailId, $this->spamFolder);
             }
 
             // We have an unidentified sender and we think it's not spam. That's why we make
@@ -153,12 +168,13 @@ class MailScannerController extends AbstractActionController
         $config    = \T3fx\Config::getInstance();
         $mailboxes = $config->getApplicationConfig('MailScanner', 'SpamBoxes');
         foreach ($mailboxes as $mailbox) {
-            $this->mailbox = new \T3fx\Library\Connector\Imap\Mailbox(
+            $this->mailbox    = new \T3fx\Library\Connector\Imap\Mailbox(
                 '{' . $mailbox["host"] . ':993/imap/ssl}' . $mailbox["folder"],
                 $mailbox["user"],
                 $mailbox["password"],
                 __DIR__
             );
+            $this->spamFolder = $mailbox["target"];
             $this->scanSpam();
             $this->mailbox->disconnect();
         }
@@ -172,7 +188,7 @@ class MailScannerController extends AbstractActionController
             $mail = $this->mailbox->getMail($mailId, false);
             $this->checkForContentFilter($mail);
             $this->checkForSenderBlacklist($mail->fromAddress);
-            $this->mailbox->moveMailToFolder($mailId, JUNK_FOLDER);
+            $this->mailbox->moveMailToFolder($mailId, $this->spamFolder);
         }
     }
 
