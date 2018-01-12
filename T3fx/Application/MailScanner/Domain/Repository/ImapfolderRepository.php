@@ -11,11 +11,11 @@
 namespace T3fx\Application\MailScanner\Domain\Repository;
 
 /**
- * Class ImapFolderRepository
+ * Class ImapfolderRepository
  *
  * @package T3fx\Application\MailScanner\Domain\Repository
  */
-class ImapFolderRepository extends AbstractRepository
+class ImapfolderRepository extends AbstractRepository
 {
 
     /**

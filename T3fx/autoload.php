@@ -8,6 +8,11 @@
 chdir(__DIR__);
 require_once '../vendor/autoload.php';
 
+// If you want overwrite some constants you can do it in config.php
+if (is_file(__DIR__ . '/ConstConfig.php') && is_readable(__DIR__ . '/ConstConfig.php')) {
+    include(__DIR__ . '/ConstConfig.php');
+}
+
 spl_autoload_register(
     function ($classname) {
 

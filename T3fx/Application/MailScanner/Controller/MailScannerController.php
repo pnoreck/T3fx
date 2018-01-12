@@ -28,11 +28,11 @@ class MailScannerController extends AbstractActionController
     var $senderRepository;
 
     /**
-     * imapFolderRepository
+     * imapfolderRepository
      *
-     * @var \T3fx\Application\MailScanner\Domain\Repository\ImapFolderRepository
+     * @var \T3fx\Application\MailScanner\Domain\Repository\ImapfolderRepository
      */
-    var $imapFolderRepository;
+    var $imapfolderRepository;
 
     /**
      * BlacklistRepository
@@ -78,7 +78,7 @@ class MailScannerController extends AbstractActionController
      *
      * @return void
      */
-    protected function initRepositories($repositories = ['sender', 'imapFolder', 'blacklist', 'contentFilter'])
+    protected function initRepositories($repositories = ['sender', 'imapfolder', 'blacklist', 'contentFilter'])
     {
         foreach ($repositories as $repository) {
             $varname = $repository . 'Repository';
@@ -221,7 +221,7 @@ class MailScannerController extends AbstractActionController
         }
 
         // If we found mails we need the repositories
-        $this->initRepositories(['sender', 'imapFolder', 'blacklist']);
+        $this->initRepositories(['sender', 'imapfolder', 'blacklist']);
 
         return $mailsIds;
     }
@@ -241,7 +241,7 @@ class MailScannerController extends AbstractActionController
             return false;
         }
 
-        $res = $this->imapFolderRepository->getByUid($res["imap_folder"]);
+        $res = $this->imapfolderRepository->getByUid($res["imap_folder"]);
         if (is_array($res) && isset($res["full_name"])) {
             return preg_replace('/\{[^\}]+\}/i', '', $res["full_name"]);
         }
