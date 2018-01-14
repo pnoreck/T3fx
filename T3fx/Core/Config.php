@@ -30,7 +30,7 @@ class Config extends \T3fx\Library\Pattern\Singleton
         $this->configuration = $configuration["default"];
 
         if (isset($configuration[$domain]) && !empty($configuration[$domain])) {
-            $this->configuration = array_merge($this->configuration, $configuration[$domain]);
+            $this->configuration = array_replace_recursive($this->configuration, $configuration[$domain]);
         }
     }
 
