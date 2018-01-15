@@ -45,6 +45,10 @@ class BlackListUtility extends Singleton
         if (preg_match('/\([^[:space:]]+ ([a-z0-9\-\.]+)\)/i', $mailHeader[0]["Received"], $hits)) {
             $ipv4 = gethostbyname($hits[1]);
 
+        } elseif (preg_match('/by\s+([a-z0-9\-\.]+\.[a-z0-9\-]+)/i', $mailHeader[0]["Received"], $hits)) {
+            // by mail.xyz.com ...
+            $ipv4 = gethostbyname($hits[1]);
+
         } elseif (preg_match('/[0-9]{1,3}(\.[0-9]{1,3}){3}/i', $mailHeader[0]["Received"], $hits)) {
             $ipv4 = $hits[0];
 
