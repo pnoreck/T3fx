@@ -11,6 +11,7 @@ namespace T3fx\Application\MailScanner\Controller;
 
 use T3fx\Application\MailScanner\Utility\BlackListUtility;
 use T3fx\Core\Controller\AbstractActionController;
+use T3fx\Library\Logging\File;
 
 /**
  * Class MailScannerController
@@ -57,7 +58,7 @@ class MailScannerController extends AbstractActionController
 
 
     /**
-     * @var \T3fx\Imap\Mailbox
+     * @var \T3fx\Library\Connector\Imap\Mailbox
      */
     var $mailbox;
 
@@ -103,12 +104,17 @@ class MailScannerController extends AbstractActionController
         // TODO: We only scan one mailbox at the moment
         $mailbox = reset($mailboxes);
 
-        $this->mailbox    = new \T3fx\Library\Connector\Imap\Mailbox(
-            '{' . $mailbox["host"] . ':993/imap/ssl}' . $mailbox["folder"],
-            $mailbox["user"],
-            $mailbox["password"],
-            TEMP_FOLDER
-        );
+        try {
+            $this->mailbox = new \T3fx\Library\Connector\Imap\Mailbox(
+                '{' . $mailbox["host"] . ':993/imap/ssl}' . $mailbox["folder"],
+                $mailbox["user"],
+                $mailbox["password"],
+                TEMP_FOLDER
+            );
+        } catch (\Exception $exception) {
+            File::log($exception->getMessage(), File::ERROR);
+            die();
+        }
         $this->spamFolder = $mailbox["target"];
         $this->sortMails();
         $this->scanSpamBoxAction();
@@ -141,6 +147,7 @@ class MailScannerController extends AbstractActionController
             if ($this->checkAgainstPrivateBlacklist($mail->fromAddress)) {
                 $this->mailbox->moveMailToFolder($mailId, $this->spamFolder);
                 $this->checkForContentFilter($mail);
+                File::log('Found mail in local blacklist: ' . $mail->fromAddress);
                 continue;
             }
 
@@ -155,6 +162,7 @@ class MailScannerController extends AbstractActionController
             if ($this->checkAgainstContentFilter($mail)) {
                 $this->checkForSenderBlacklist($mail->fromAddress);
                 $this->mailbox->moveMailToFolder($mailId, $this->spamFolder);
+                File::log('Found mail in local content filter: ' . $mail->fromAddress . ': ' . $mail->subject);
             }
 
             // We have an unidentified sender and we think it's not spam. That's why we make
@@ -172,12 +180,17 @@ class MailScannerController extends AbstractActionController
         $config    = \T3fx\Config::getInstance();
         $mailboxes = $config->getApplicationConfig('MailScanner', 'SpamBoxes');
         foreach ($mailboxes as $mailbox) {
-            $this->mailbox    = new \T3fx\Library\Connector\Imap\Mailbox(
-                '{' . $mailbox["host"] . ':993/imap/ssl}' . $mailbox["folder"],
-                $mailbox["user"],
-                $mailbox["password"],
-                TEMP_FOLDER
-            );
+            try {
+                $this->mailbox = new \T3fx\Library\Connector\Imap\Mailbox(
+                    '{' . $mailbox["host"] . ':993/imap/ssl}' . $mailbox["folder"],
+                    $mailbox["user"],
+                    $mailbox["password"],
+                    TEMP_FOLDER
+                );
+            } catch (\Exception $exception) {
+                File::log($exception->getMessage(), File::ERROR);
+                die();
+            }
             $this->spamFolder = $mailbox["target"];
             $this->scanSpam();
             $this->mailbox->disconnect();

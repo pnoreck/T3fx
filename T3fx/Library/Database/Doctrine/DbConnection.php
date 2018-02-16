@@ -14,7 +14,9 @@
 
 namespace T3fx\Library\Database\Doctrine;
 
+use Doctrine\DBAL\DriverManager;
 use T3fx\Config;
+use T3fx\Library\Logging\File;
 use T3fx\Library\Pattern\Singleton;
 
 /**
@@ -30,12 +32,30 @@ class DbConnection extends Singleton
      */
     protected static $conn;
 
+    /**
+     * Initialize Database connection
+     *
+     * @return void
+     */
     protected function init()
     {
         $config           = new \Doctrine\DBAL\Configuration();
         $connectionParams = Config::getInstance()->getDatabaseConfig();
-        self::$conn       = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
+        try {
+            self::$conn       = DriverManager::getConnection($connectionParams, $config);
+        } catch (\Exception $e) {
+            File::log('Could not connect to database');
+            die();
+        }
     }
 
 
+    /**
+     * Return the current database connection
+     *
+     * @return \Doctrine\DBAL\Connection
+     */
+    public function getConnection() {
+        return (self::$conn instanceof \Doctrine\DBAL\Connection) ? self::$conn : null;
+    }
 }
