@@ -8,7 +8,8 @@
     "intervention/imagecache": "2.3.3",
     "anlutro/curl": "1.4.2",
     "jbboehr/dnsbl": "0.1.*",
-    "delight-im/auth": "^7.2"
+    "delight-im/auth": "^7.2",
+    "twig/twig": "^2.0"
   },
   "license": "The MIT License (MIT)",
   "authors": [

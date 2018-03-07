@@ -53,4 +53,37 @@ class ImapfolderRepository extends AbstractRepository
         return $query->execute()->fetch();
     }
 
+    /**
+     * Reset the update field 'mailscanneer' to zero at all imap folders
+     *
+     * @return void
+     */
+    public function resetImportFlag()
+    {
+        $this->update(['mailscanner' => 0], '1=1');
+    }
+
+    /**
+     * Set the import flag to the folder with the given uid
+     *
+     * @param int $uid
+     *
+     * @return void
+     */
+    public function setImportFlag(int $uid)
+    {
+        $this->update(['mailscanner' => time()], 'uid = ' . intval($uid));
+    }
+
+    /**
+     * Set the deleted flag to all folders where the import flag is null
+     *
+     * @return void
+     */
+    public function deleteFoldersWithoutImportFlag()
+    {
+        $this->update(['deleted' => 1], 'mailscanner = 0');
+    }
+
+
 }

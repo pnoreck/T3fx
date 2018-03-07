@@ -58,6 +58,7 @@ CREATE TABLE `tx_t3fxmailscanner_domain_model_imap_folder` (
   `starttime` int(11) unsigned NOT NULL DEFAULT 0,
   `endtime` int(11) unsigned NOT NULL DEFAULT 0,
   `mailscanner` int(11) unsigned NOT NULL DEFAULT 0,
+
   PRIMARY KEY (`uid`),
   KEY `parent` (`pid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

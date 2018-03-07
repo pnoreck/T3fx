@@ -97,6 +97,20 @@ class MailScannerController extends AbstractActionController
      */
     public function scanAction()
     {
+        $this->connectToMainMailbox();
+        $this->sortMails();
+        $this->scanSpamBoxAction();
+    }
+
+    /**
+     * Connect to "main" mailbox
+     *
+     * @todo make it configurable
+     *
+     * @return void
+     */
+    protected function connectToMainMailbox()
+    {
         /** @var \T3fx\Config $config */
         $config    = \T3fx\Config::getInstance();
         $mailboxes = $config->getApplicationConfig('MailScanner', 'MailBoxes');
@@ -116,8 +130,7 @@ class MailScannerController extends AbstractActionController
             die();
         }
         $this->spamFolder = $mailbox["target"];
-        $this->sortMails();
-        $this->scanSpamBoxAction();
+
     }
 
     /**
@@ -131,6 +144,7 @@ class MailScannerController extends AbstractActionController
         if (!is_array($mailIds) || !$mailIds) {
             return false;
         }
+
         foreach ($mailIds as $mailId) {
 
             // Get the mail
@@ -216,6 +230,48 @@ class MailScannerController extends AbstractActionController
             $this->checkForSenderBlacklist($mail->fromAddress);
             $this->mailbox->moveMailToFolder($mailId, $this->spamFolder);
         }
+    }
+
+
+    public function updateFolderAction()
+    {
+        // make sure we have an connection to the mailbox
+        $this->connectToMainMailbox();
+
+        // Let's get all folders from the connected mailbox
+        $folders = $this->mailbox->getMailboxFolders();
+
+        // path is the inbox path which we use to extract the name of the folder
+        $path = $this->mailbox->getMailBoxPath();
+
+        // We reset the import flag to identify the folders which are deleted
+        $this->imapfolderRepository->resetImportFlag();
+
+        foreach ($folders as $sorting => $folder) {
+
+            $dbFolder = $this->imapfolderRepository->getByName($folder, true);
+
+            // is the
+            if (is_array($dbFolder) && $dbFolder["uid"] > 0) {
+                $this->imapfolderRepository->setImportFlag($dbFolder["uid"]);
+                continue;
+            }
+
+            $insertArray = [
+                'full_name'   => $folder,
+                'name'        => str_replace($path, '', $folder),
+                'mailscanner' => time()
+            ];
+
+            if ($insertArray['name'] == '') {
+                $insertArray['name'] = 'INBOX';
+            }
+
+            $this->imapfolderRepository->insert($insertArray);
+        }
+
+        $this->imapfolderRepository->deleteFoldersWithoutImportFlag();
+
     }
 
 

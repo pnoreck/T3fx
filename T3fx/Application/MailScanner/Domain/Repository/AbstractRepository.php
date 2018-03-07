@@ -45,7 +45,7 @@ class AbstractRepository extends \T3fx\Domain\Repository\StandardRepository
         );
     }
 
-    protected function insert($array)
+    public function insert($array)
     {
         return parent::insertArray(
             $this->getTableName(),
