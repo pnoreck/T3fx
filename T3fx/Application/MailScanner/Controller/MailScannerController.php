@@ -244,6 +244,9 @@ class MailScannerController extends AbstractActionController
         // path is the inbox path which we use to extract the name of the folder
         $path = $this->mailbox->getMailBoxPath();
 
+        // We need the repository
+        $this->initRepositories(['imapfolder']);
+
         // We reset the import flag to identify the folders which are deleted
         $this->imapfolderRepository->resetImportFlag();
 
