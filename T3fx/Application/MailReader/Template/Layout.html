@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block pageTitle %}Title{% endblock %}</title>
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/Layout/MailReader/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+    <div class="header clearfix">
+        <h3 class="text-muted">T3fx Mail Facilitator</h3>
+        <br />
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <ul class="navbar-nav">
+                {% for item in navigation %}
+                    <li class="nav-item"><a class="nav-link" href="{{ item.href }}">{{ item.caption }}</a></li>
+                {% endfor %}
+            </ul>
+        </nav>
+    </div>
+
+    <div class="jumbotron">
+        {% block jumbotron %}
+        <h1>Test</h1>
+        <p>Lorem ipsum</p>
+        {% endblock %}
+    </div>
+
+
+    <div class="row marketing">
+        <div class="col-lg-6">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+
+    <footer class="footer">
+        <p>&copy; 2018 t3x.ch</p>
+    </footer>
+</div>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+
+</body>
+</html>

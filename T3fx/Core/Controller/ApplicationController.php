@@ -68,6 +68,8 @@ class ApplicationController
                 header('Content-Type: application/json');
                 echo json_encode($result);
                 return;
+            } elseif(is_string($result) && $result !== '') {
+                echo $result;
             }
         }
 

@@ -16,16 +16,76 @@ class MailReaderController extends AbstractActionController
 {
 
     /**
-     * @see https://github.com/delight-im/PHP-Auth
+     * @var \Twig_Environment
+     */
+    protected $view;
+
+    /**
+     * imapfolderRepository
      *
-     * @return void
+     * @var \T3fx\Application\MailScanner\Domain\Repository\ImapfolderRepository
+     */
+    var $imapfolderRepository;
+
+    /**
+     * MailReaderController constructor.
+     */
+    public function __construct()
+    {
+        $loader     = new \Twig_Loader_Filesystem(DOCUMENT_ROOT . 'Application/MailReader/Template');
+        $this->view = new \Twig_Environment(
+            $loader, array(// 'cache' => TEMP_FOLDER,
+            )
+        );
+    }
+
+    /**
+     * The index action
+     *
+     * @return string
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     public function indexAction()
     {
-        /** @var DbConnection $db */
-        $db = DbConnection::getInstance();
-        $conn = $db->getConnection();
 
-        $auth = new \Delight\Auth\Auth($conn);
+        return $this->view->render(
+            'index.html',
+            [
+                'navigation' => $this->getNavigation(),
+
+            ]
+        );
+    }
+
+
+    protected function getNavigation()
+    {
+        $navigation = [
+
+            [
+                'href'    => '/MailReader/#',
+                'caption' => 'Folder'
+            ],
+            [
+                'href'    => '/MailReader/#',
+                'caption' => 'Sender'
+            ],
+            [
+                'href'    => '/MailReader/#',
+                'caption' => 'Blacklist'
+            ],
+            [
+                'href'    => '/MailReader/#',
+                'caption' => 'Whitelist'
+            ],
+            [
+                'href'    => '/MailReader/#',
+                'caption' => 'Settings'
+            ],
+        ];
+
+        return $navigation;
     }
 }
