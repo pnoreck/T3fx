@@ -8,3 +8,5 @@
 /index.php
 /T3fx/config.php
 /T3fx/LocalConfig.php
+.idea
+/Logs/

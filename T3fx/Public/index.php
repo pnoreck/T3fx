@@ -1,10 +1,11 @@
-<pre><?php
+<?php
 /**
  * Created by PhpStorm.
  * User: Steffen Hastädt
  * Date: 03/07/16
  * Time: 10:57
  */
+
 
 require_once( '../autoload.php' );
 
