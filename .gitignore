@@ -5,3 +5,4 @@
 /T3fx/LocalConfig.php
 Logs/
 /T3fx/Temp/*
+.DS_Store
