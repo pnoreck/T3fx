@@ -183,8 +183,6 @@ class MailScannerController extends AbstractActionController
             // an entry in the sender list so that the user can assign it to an folder
             $this->senderRepository->createUndefinedSender($mail->fromAddress);
         }
-
-        $this->mailbox->disconnect();
     }
 
 
@@ -207,20 +205,19 @@ class MailScannerController extends AbstractActionController
             }
             $this->spamFolder = $mailbox["target"];
             $this->scanSpam();
-            $this->mailbox->disconnect();
         }
     }
 
     /**
      * The current mailbox is a spam folder. We analyse all mails and fill the blacklists with the content
      *
-     * @return bool
+     * @return void
      */
     protected function scanSpam()
     {
         $mailsIds = $this->getMailIDs();
         if (!$mailsIds) {
-            return false;
+            return;
         }
 
         foreach ($mailsIds as $mailId) {
@@ -288,7 +285,6 @@ class MailScannerController extends AbstractActionController
         // Read all messaged into an array:
         $mailsIds = $this->mailbox->searchMailbox('ALL');
         if (!$mailsIds) {
-            $this->mailbox->disconnect();
             return false;
         }
 

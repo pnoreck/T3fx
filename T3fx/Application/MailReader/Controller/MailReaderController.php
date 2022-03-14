@@ -8,17 +8,10 @@
 
 namespace T3fx\Application\MailReader\Controller;
 
-use T3fx\Application\MailScanner\Utility\BlackListUtility;
 use T3fx\Core\Controller\AbstractActionController;
-use T3fx\Library\Database\Doctrine\DbConnection;
 
 class MailReaderController extends AbstractActionController
 {
-
-    /**
-     * @var \Twig_Environment
-     */
-    protected $view;
 
     /**
      * imapfolderRepository
@@ -26,14 +19,18 @@ class MailReaderController extends AbstractActionController
      * @var \T3fx\Application\MailScanner\Domain\Repository\ImapfolderRepository
      */
     var $imapfolderRepository;
+    /**
+     * @var \Twig_Environment
+     */
+    protected $view;
 
     /**
      * MailReaderController constructor.
      */
     public function __construct()
     {
-        $loader     = new \Twig_Loader_Filesystem(DOCUMENT_ROOT . 'Application/MailReader/Template');
-        $this->view = new \Twig_Environment(
+        $loader     = new \Twig\Loader\FilesystemLoader(DOCUMENT_ROOT . 'Application/MailReader/Template');
+        $this->view = new \Twig\Environment(
             $loader, array(// 'cache' => TEMP_FOLDER,
             )
         );
