@@ -142,7 +142,7 @@ class MailScannerController extends AbstractActionController
     {
         $mailIds = $this->getMailIDs();
         if (!is_array($mailIds) || !$mailIds) {
-            return false;
+            return;
         }
 
         foreach ($mailIds as $mailId) {

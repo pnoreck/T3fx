@@ -26,7 +26,7 @@ class ContentFilterRepository extends AbstractRepository
         $query->setParameter(0, $sha1);
         $query->setParameter(1, 'SUBJECT');
 
-        return $query->execute()->fetch();
+        return $query->execute()->fetchAssociative();
     }
 
     /**

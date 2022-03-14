@@ -31,7 +31,7 @@ class WhitelistRepository extends AbstractRepository
         $query->where('name = ?' . self::HIDDEN_FIELDS);
         $query->setParameter(0, $domain);
 
-        return $query->execute()->fetch();
+        return $query->execute()->fetchAssociative();
     }
 
 

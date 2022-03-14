@@ -19,7 +19,7 @@ class Database extends \T3fx\Library\Database\Doctrine\DBAL {
 		$query->setParameter(0, $cityUid);
 		$query->addOrderBy('crdate', 'DESC');
 		$query->setMaxResults(1);
-		return $query->execute()->fetch();
+		return $query->execute()->fetchAssociative();
 	}
 
 }

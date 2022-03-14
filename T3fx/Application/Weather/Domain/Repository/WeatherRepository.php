@@ -33,6 +33,6 @@ class WeatherRepository extends \T3fx\Domain\Repository\StandardRepository
         $query->orderBy('crdate', 'DESC');
         $query->setMaxResults(1);
 
-        return $query->execute()->fetch();
+        return $query->execute()->fetchAssociative();
     }
 }

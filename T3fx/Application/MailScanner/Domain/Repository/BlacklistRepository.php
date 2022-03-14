@@ -34,7 +34,7 @@ class BlacklistRepository extends AbstractRepository
         $query->setParameter(0, $mailFrom);
         $query->setParameter(1, $domain);
 
-        return $query->execute()->fetch();
+        return $query->execute()->fetchAssociative();
     }
 
     /**

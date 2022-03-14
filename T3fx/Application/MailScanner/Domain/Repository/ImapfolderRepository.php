@@ -31,7 +31,7 @@ class ImapfolderRepository extends AbstractRepository
         $query->where('uid = ?' . self::HIDDEN_FIELDS);
         $query->setParameter(0, $folderUid);
 
-        return $query->execute()->fetch();
+        return $query->execute()->fetchAssociative();
     }
 
     /**
@@ -50,7 +50,7 @@ class ImapfolderRepository extends AbstractRepository
         $query->where('full_name = ?' . (($ignoreHiddenFields) ? '' : self::HIDDEN_FIELDS));
         $query->setParameter(0, $fullNname);
 
-        return $query->execute()->fetch();
+        return $query->execute()->fetchAssociative();
     }
 
     /**

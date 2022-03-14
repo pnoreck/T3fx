@@ -13,7 +13,6 @@ class WeatherController
 
     /**
      * @var \T3fx\Application\Weather\Domain\Repository\WeatherRepository
-     * @inject
      */
     protected $WeatherRepository;
 

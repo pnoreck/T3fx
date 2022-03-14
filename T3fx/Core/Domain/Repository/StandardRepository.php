@@ -104,7 +104,7 @@ class StandardRepository extends \T3fx\Library\Database\Doctrine\DBAL
         $query->where('uid = ?');
         $query->setParameter(0, $uid);
 
-        return $query->execute()->fetch();
+        return $query->execute()->fetchAssociative();
 
     }
 

@@ -30,7 +30,7 @@ class SenderRepository extends AbstractRepository
         $query->where('name = ?' . self::HIDDEN_FIELDS);
         $query->setParameter(0, $sender);
 
-        return $query->execute()->fetch();
+        return $query->execute()->fetchAssociative();
     }
 
 
