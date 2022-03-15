@@ -9,51 +9,57 @@
 namespace T3fx\Library\Pattern;
 
 
-abstract class Singleton {
+abstract class Singleton
+{
 
-	/**
-	 * instance
-	 *
-	 * Instances of singleton classes
-	 *
-	 * @var Singleton
-	 */
-	protected static $instances = [];
+    /**
+     * instance
+     *
+     * Instances of singleton classes
+     *
+     * @var Singleton
+     */
+    protected static $instances = [];
 
-	/**
-	 * get instance
-	 *
-	 * Create the instance of the class if not exist and return it
-	 *
-	 * @return   Singleton
-	 */
-	final public static function getInstance() {
+    /**
+     * constructor
+     *
+     * prohibit external use of constructor
+     */
+    private function __construct()
+    {
+    }
 
-		$calledClass = get_called_class();
+    /**
+     * get instance
+     *
+     * Create the instance of the class if not exist and return it
+     *
+     * @return   Singleton
+     */
+    final public static function getInstance()
+    {
 
-		if (!isset(self::$instances[$calledClass])) {
-			self::$instances[$calledClass] = new $calledClass();
-			if(method_exists(self::$instances[$calledClass], 'init')) {
-				self::$instances[$calledClass]->init();
-			}
-		}
+        $calledClass = get_called_class();
 
-		return self::$instances[$calledClass];
-	}
+        if (!isset(self::$instances[$calledClass])) {
+            self::$instances[$calledClass] = new $calledClass();
+            if (method_exists(self::$instances[$calledClass], 'init')) {
+                self::$instances[$calledClass]->init();
+            }
+        }
 
-	/**
-	 * clone
-	 *
-	 * prohibit external copy of the instance
-	 */
-	final private function __clone() {}
+        return self::$instances[$calledClass];
+    }
 
-	/**
-	 * constructor
-	 *
-	 * prohibit external use of constructor
-	 */
-	final private function __construct() {}
+    /**
+     * clone
+     *
+     * prohibit external copy of the instance
+     */
+    private function __clone()
+    {
+    }
 
 }
 

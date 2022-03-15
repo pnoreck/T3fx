@@ -21,7 +21,7 @@ class DyndnsController extends AbstractActionController
 
         $file      = DOCUMENT_ROOT . 'Temp/currentip.txt';
         $currentIP = $_SERVER["REMOTE_ADDR"];
-        $lastIP    = trim(file_get_contents($file));
+        $lastIP    = file_exists($file) ? trim(file_get_contents($file)): '';
 
         if ($lastIP != $currentIP) {
 

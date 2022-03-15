@@ -17,5 +17,10 @@
       "name": "Steffen Hastädt",
       "email": "sh@t3x.ch"
     }
-  ]
+  ],
+  "config": {
+    "allow-plugins": {
+      "kylekatarnls/update-helper": true
+    }
+  }
 }
