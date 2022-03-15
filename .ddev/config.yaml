@@ -15,6 +15,9 @@ mutagen_enabled: false
 use_dns_when_possible: true
 composer_version: ""
 web_environment: []
+webimage_extra_packages:
+  - php8.0-imap
+
 
 # Key features of ddev's config.yaml:
 
