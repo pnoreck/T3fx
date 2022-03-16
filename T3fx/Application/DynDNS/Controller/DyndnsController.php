@@ -30,7 +30,7 @@ class DyndnsController extends AbstractActionController
             $updateUrl = \T3fx\Config::getInstance()->getApplicationConfig('DynDNS', 'UpdateUrl');
             $updateUrl = str_replace('{new_ip}', $currentIP, $updateUrl);
 
-            \T3fx\Library\Connector\Http\Curl::Call($updateUrl);
+            \T3fx\Library\Connector\Http\Curl::Get($updateUrl);
 
             return [
                 'new_ip' => $currentIP,

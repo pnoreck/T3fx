@@ -105,7 +105,30 @@ class StandardRepository extends \T3fx\Library\Database\Doctrine\DBAL
         $query->setParameter(0, $uid);
 
         return $query->execute()->fetchAssociative();
-
     }
 
+    /**
+     * Find all records of the table
+     *
+     * @return false|mixed|mixed[]
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function findAll() {
+        $query = $this->conn->createQueryBuilder();
+        $query->select('*');
+        $query->from($this->getTableName());
+        return $query->execute()->fetchAllAssociative();
+    }
+
+    /**
+     * Insert a record in the current table
+     *
+     * @param $array
+     *
+     * @return \Doctrine\DBAL\Driver\Statement|int
+     */
+    public function insert($array) {
+        return $this->insertArray($this->getTableName(), $array);
+    }
 }

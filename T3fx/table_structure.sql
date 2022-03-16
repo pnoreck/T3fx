@@ -102,3 +102,37 @@ CREATE TABLE `tx_t3fxmailscanner_domain_model_whitelist` (
   KEY `name` (`name`,`deleted`,`hidden`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+# t3fx_weather
+# ------------------------------------------------------------
+CREATE TABLE `t3fx_weather` (
+  `uid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `crdate` int(11) NOT NULL,
+  `tstamp` int(11) NOT NULL,
+  `city_id` int(11) NOT NULL,
+  `json` text NOT NULL,
+  PRIMARY KEY (`uid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+# t3fx_indoor_weather_ips
+# ------------------------------------------------------------
+CREATE TABLE `tx_weather_domain_model_indoor_weather_ips` (
+  `uid` int(10) UNSIGNED NOT NULL,
+  `crdate` int(11) NOT NULL,
+  `tstamp` int(11) NOT NULL,
+  `ip` varchar(39) NOT NULL DEFAULT '',
+  PRIMARY KEY (`uid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+# t3fx_indoor_weather
+# ------------------------------------------------------------
+CREATE TABLE `tx_weather_domain_model_indoor_weather` (
+  `uid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `crdate` int(11) NOT NULL,
+  `tstamp` int(11) NOT NULL,
+  `ip` int(11) NOT NULL,
+  `temperature` int(11) NOT NULL,
+  `humidity` int(11) NOT NULL,
+  PRIMARY KEY (`uid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+

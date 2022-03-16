@@ -18,10 +18,11 @@ class Curl
      * Call an URL without getting an answer
      *
      * @param $url string
+     * @return string
      */
-    public static function Call($url)
+    public static function Get(string $url)
     {
         $curl = new \anlutro\cURL\cURL();
-        $curl->get($url);
+        return $curl->get($url);
     }
 }
