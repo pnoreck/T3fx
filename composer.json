@@ -9,7 +9,8 @@
     "anlutro/curl": "1.4.2",
     "jbboehr/dnsbl": "0.1.*",
     "twig/twig": "^2.0",
-    "twbs/bootstrap": "4.0.0"
+    "twbs/bootstrap": "4.0.0",
+    "ext-json": "*"
   },
   "license": "The MIT License (MIT)",
   "authors": [
