@@ -8,21 +8,26 @@
 
 namespace T3fx\Application\Weather\Controller;
 
-class WeatherController
+use T3fx\Application\Weather\Domain\Repository\IndoorWeatherIpsRepository;
+use T3fx\Application\Weather\Domain\Repository\IndoorWeatherRepository;
+use T3fx\Application\Weather\Domain\Repository\WeatherRepository;
+use T3fx\Core\Controller\AbstractActionController;
+
+class WeatherController extends AbstractActionController
 {
 
     /**
-     * @var \T3fx\Application\Weather\Domain\Repository\WeatherRepository
+     * @var WeatherRepository
      */
     protected $WeatherRepository;
 
     /**
-     * @var \T3fx\Application\Weather\Domain\Repository\IndoorWeatherIpsRepository
+     * @var IndoorWeatherIpsRepository
      */
     protected $indoorWeatherIpsRepository;
 
     /**
-     * @var \T3fx\Application\Weather\Domain\Repository\IndoorWeatherRepository
+     * @var IndoorWeatherRepository
      */
     protected $indoorWeatherRepository;
 
@@ -33,11 +38,9 @@ class WeatherController
     {
         defined('TABLE_PREFIX') or define('TABLE_PREFIX', 'tx_weather_domain_model_');
 
-        // Till we have in auto inject
-        $this->WeatherRepository          = new \T3fx\Application\Weather\Domain\Repository\WeatherRepository();
-        $this->indoorWeatherIpsRepository = new \T3fx\Application\Weather\Domain\Repository\IndoorWeatherIpsRepository(
-        );
-        $this->indoorWeatherRepository    = new \T3fx\Application\Weather\Domain\Repository\IndoorWeatherRepository();
+        $this->WeatherRepository          = new WeatherRepository();
+        $this->indoorWeatherIpsRepository = new IndoorWeatherIpsRepository();
+        $this->indoorWeatherRepository    = new IndoorWeatherRepository();
     }
 
     /**
@@ -54,7 +57,6 @@ class WeatherController
      */
     public function getAction()
     {
-
         // TODO: GET and POST parameters over processor method for secure request parameter handling
         $time = $_GET["time"];
         if (empty($time)) {
@@ -98,5 +100,16 @@ class WeatherController
                 }
             }
         }
+    }
+
+    public function showIndoorTemperatureAction() {
+        $this->initView('Weather');
+        $weaterData = $this->indoorWeatherRepository->findAll();
+        return $this->view->render(
+            'index.html',
+            [
+                'weatherData' => json_encode($weaterData)
+            ]
+        );
     }
 }

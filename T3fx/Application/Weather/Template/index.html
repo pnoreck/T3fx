@@ -12,22 +12,13 @@
 <body>
 <div class="container">
     <div class="header clearfix">
-        <h3 class="text-muted">T3fx Mail Facilitator</h3>
-        <br />
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <ul class="navbar-nav">
-                {% for item in navigation %}
-                    <li class="nav-item"><a class="nav-link" href="{{ item.href }}">{{ item.caption }}</a></li>
-                {% endfor %}
-            </ul>
-        </nav>
+        <h3 class="text-muted">Indoor Weather</h3>
     </div>
 
     <div class="jumbotron">
-        {% block jumbotron %}
         <h1>Test</h1>
-        <p>Lorem ipsum</p>
-        {% endblock %}
+        <input type="hidden" id="weaterData" value="{{ weatherData }}" />
+        <p></p>
     </div>
 
 

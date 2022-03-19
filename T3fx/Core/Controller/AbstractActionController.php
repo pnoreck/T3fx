@@ -21,6 +21,24 @@ namespace T3fx\Core\Controller;
  */
 class AbstractActionController
 {
+
+    /**
+     * @var \Twig_Environment
+     */
+    protected $view;
+
+    /**
+     * MailReaderController constructor.
+     */
+    public function initView(string $application)
+    {
+        $loader     = new \Twig\Loader\FilesystemLoader(DOCUMENT_ROOT . 'Application/' . $application . '/Template');
+        $this->view = new \Twig\Environment(
+            $loader, array(// 'cache' => TEMP_FOLDER,
+            )
+        );
+    }
+
     /**
      * Index Action
      */

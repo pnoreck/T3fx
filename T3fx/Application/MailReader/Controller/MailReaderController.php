@@ -19,21 +19,13 @@ class MailReaderController extends AbstractActionController
      * @var \T3fx\Application\MailScanner\Domain\Repository\ImapfolderRepository
      */
     var $imapfolderRepository;
-    /**
-     * @var \Twig_Environment
-     */
-    protected $view;
 
     /**
      * MailReaderController constructor.
      */
     public function __construct()
     {
-        $loader     = new \Twig\Loader\FilesystemLoader(DOCUMENT_ROOT . 'Application/MailReader/Template');
-        $this->view = new \Twig\Environment(
-            $loader, array(// 'cache' => TEMP_FOLDER,
-            )
-        );
+        $this->initView('MailReader');
     }
 
     /**
@@ -46,12 +38,28 @@ class MailReaderController extends AbstractActionController
      */
     public function indexAction()
     {
-
         return $this->view->render(
             'index.html',
             [
                 'navigation' => $this->getNavigation(),
 
+            ]
+        );
+    }
+
+    /**
+     * Render folders
+     *
+     * @return string
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
+    public function folderAction() {
+        return $this->view->render(
+            'index.html',
+            [
+                'navigation' => $this->getNavigation(),
             ]
         );
     }
@@ -62,7 +70,7 @@ class MailReaderController extends AbstractActionController
         $navigation = [
 
             [
-                'href'    => '/MailReader/#',
+                'href'    => '/MailReader/Folder',
                 'caption' => 'Folder'
             ],
             [
