@@ -10,7 +10,8 @@
     "jbboehr/dnsbl": "0.1.*",
     "twig/twig": "^2.0",
     "twbs/bootstrap": "4.0.0",
-    "ext-json": "*"
+    "ext-json": "*",
+    "ext-imap": "*"
   },
   "license": "The MIT License (MIT)",
   "authors": [

@@ -101,6 +101,7 @@ class MailScannerController extends AbstractActionController
         $this->connectToMainMailbox();
         $this->sortMails();
         $this->scanSpamBoxAction();
+        $this->cleanupTemp();
     }
 
     /**
@@ -409,6 +410,21 @@ class MailScannerController extends AbstractActionController
                 $this->blacklistRepository->addDomainToBlacklist($domain);
             } else {
                 $this->blacklistRepository->addSenderToBlacklist($domain);
+            }
+        }
+    }
+
+    /**
+     * Remove all temp files
+     *
+     * @return void
+     */
+    public function cleanupTemp() {
+        $files = scandir(TEMP_FOLDER);
+        foreach($files as $file) {
+            $file = TEMP_FOLDER.$file;
+            if(is_file($file)) {
+                unlink($file);
             }
         }
     }
