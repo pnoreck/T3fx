@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block pageTitle %}Title{% endblock %}</title>
+</head>
+<body>
+
+<input type="hidden" id="temperatureData" value="{{ temperatureData }}"/>
+<input type="hidden" id="humidityData" value="{{ humidityData }}"/>
+
+<div id="temperature_chart" style="width: 100%; height: 500px"></div>
+<div id="humidity_chart" style="width: 100%; height: 500px"></div>
+
+<footer style="text-align: center; margin-top: 50px;">&copy; 2022 t3x.ch</footer>
+
+<!-- Optional JavaScript -->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="/Layout/Weather/JavaScript/Weather.js"></script>
+
+</body>
+</html>

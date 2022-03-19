@@ -102,13 +102,69 @@ class WeatherController extends AbstractActionController
         }
     }
 
-    public function showIndoorTemperatureAction() {
+    public function showIndoorTemperatureAction()
+    {
         $this->initView('Weather');
-        $weaterData = $this->indoorWeatherRepository->findAll();
+        $weaterRecords     = $this->indoorWeatherRepository->findAll();
+        $temperatureData   = [];
+        $temperatureData[] = [
+            'Date',
+            'Intake temp',
+            'Room temp'
+        ];
+
+        $humidityData   = [];
+        $humidityData[] = [
+            'Date',
+            'Intake humidity',
+            'Room humidity'
+        ];
+
+        foreach ($weaterRecords as $weaterRecord) {
+            $crdata = date('Y-m-d H:i', $weaterRecord["crdate"]);
+
+            // Create temperature records
+            $temperatureData[$crdata]                      = $temperatureData[$crdata] ?? [
+                    date(
+                        'H:i',
+                        $weaterRecord["crdate"]
+                    )
+                ];
+            $temperatureData[$crdata][$weaterRecord["ip"]] = (int)$weaterRecord["temperature"];
+
+            // Create humidity records
+            $humidityData[$crdata]                      = $humidityData[$crdata] ?? [
+                    date(
+                        'H:i',
+                        $weaterRecord["crdate"]
+                    )
+                ];
+            $humidityData[$crdata][$weaterRecord["ip"]] = (int)$weaterRecord["humidity"];
+        }
+
+        // Sort them right
+        ksort($temperatureData);
+        ksort($humidityData);
+
+        // Fix the array keys for Google Charts
+        $cleanedTemperatureData = [];
+        foreach ($temperatureData as $record) {
+            ksort($record);
+            $cleanedTemperatureData[] = array_values($record);
+        }
+
+        // Fix the array keys for Google Charts
+        $cleanedHumidityData = [];
+        foreach ($humidityData as $record) {
+            ksort($record);
+            $cleanedHumidityData[] = array_values($record);
+        }
+
         return $this->view->render(
-            'index.html',
+            'index.twig',
             [
-                'weatherData' => json_encode($weaterData)
+                'temperatureData' => json_encode($cleanedTemperatureData),
+                'humidityData'    => json_encode($cleanedHumidityData),
             ]
         );
     }
