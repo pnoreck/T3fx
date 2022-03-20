@@ -126,7 +126,7 @@ class WeatherController extends AbstractActionController
             // Create temperature records
             $temperatureData[$crdata]                      = $temperatureData[$crdata] ?? [
                     date(
-                        'H:i',
+                        'd.m. H:i',
                         $weaterRecord["crdate"]
                     )
                 ];
@@ -135,7 +135,7 @@ class WeatherController extends AbstractActionController
             // Create humidity records
             $humidityData[$crdata]                      = $humidityData[$crdata] ?? [
                     date(
-                        'H:i',
+                        'd.m. H:i',
                         $weaterRecord["crdate"]
                     )
                 ];
