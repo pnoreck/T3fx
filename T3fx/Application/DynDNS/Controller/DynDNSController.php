@@ -10,7 +10,7 @@ namespace T3fx\Application\DynDNS\Controller;
 
 use T3fx\Core\Controller\AbstractActionController;
 
-class DyndnsController extends AbstractActionController
+class DynDNSController extends AbstractActionController
 {
 
     /**
