@@ -28,7 +28,8 @@ return [
         'applications' => [
 
             'DynDNS' => [
-                'UpdateUrl' => '',
+                'UpdateUrlT3x' => '',
+                'UpdateUrlHastaedt' => '',
             ],
 
             'OpenWeatherMap' => [
