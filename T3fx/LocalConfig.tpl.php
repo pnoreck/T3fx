@@ -28,7 +28,8 @@ return [
         'applications' => [
 
             'DynDNS' => [
-                'UpdateUrl' => '',
+                'UpdateUrlT3x'      => 'https://home.t3x.ch:1234test@www.udmedia.de/nic/update?myip={new_ip}',
+                'UpdateUrlHastaedt' => 'https://home.hastaedt.de:1234test@www.udmedia.de/nic/update?myip={new_ip}',
             ],
 
             'OpenWeatherMap' => [
