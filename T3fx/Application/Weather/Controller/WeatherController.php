@@ -97,6 +97,8 @@ class WeatherController extends AbstractActionController
                     $indoorWeather["crdate"] = time();
                     $indoorWeather["tstamp"] = $indoorWeather["crdate"];
                     $this->indoorWeatherRepository->insert($indoorWeather);
+                } else {
+                    echo 'No indoor weather?' . PHP_EOL;
                 }
             }
         }
