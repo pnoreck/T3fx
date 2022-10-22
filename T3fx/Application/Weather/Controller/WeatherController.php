@@ -109,15 +109,15 @@ class WeatherController extends AbstractActionController
         $temperatureData   = [];
         $temperatureData[] = [
             'Date',
-            'Intake temp',
-            'Room temp'
+            'Office',
+            'Bedroom'
         ];
 
         $humidityData   = [];
         $humidityData[] = [
             'Date',
-            'Intake humidity',
-            'Room humidity'
+            'Office',
+            'Bedroom'
         ];
 
         foreach ($weaterRecords as $weaterRecord) {

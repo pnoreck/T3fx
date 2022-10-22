@@ -1,7 +1,7 @@
 name: tools.t3x.ch
 type: php
 docroot: "T3fx/Public"
-php_version: "8.0"
+php_version: "8.1"
 webserver_type: apache-fpm
 router_http_port: "80"
 router_https_port: "443"
@@ -16,7 +16,7 @@ use_dns_when_possible: true
 composer_version: ""
 web_environment: []
 webimage_extra_packages:
-  - php8.0-imap
+  - php8.1-imap
 
 
 # Key features of ddev's config.yaml:
