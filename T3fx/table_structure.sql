@@ -116,23 +116,35 @@ CREATE TABLE `t3fx_weather` (
 # t3fx_indoor_weather_ips
 # ------------------------------------------------------------
 CREATE TABLE `tx_weather_domain_model_indoor_weather_ips` (
-  `uid` int(10) UNSIGNED NOT NULL,
+  `uid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `crdate` int(11) NOT NULL,
   `tstamp` int(11) NOT NULL,
   `ip` varchar(39) NOT NULL DEFAULT '',
+  `name` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`uid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 # t3fx_indoor_weather
 # ------------------------------------------------------------
 CREATE TABLE `tx_weather_domain_model_indoor_weather` (
-  `uid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `crdate` int(11) NOT NULL,
   `tstamp` int(11) NOT NULL,
   `ip` int(11) NOT NULL,
   `temperature` int(11) NOT NULL,
   `humidity` int(11) NOT NULL,
   PRIMARY KEY (`uid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
+# t3fx_indoor_weather_ips_correction
+# ------------------------------------------------------------
+CREATE TABLE `tx_weather_domain_model_indoor_weather_ipcorrection` (
+  `uid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `crdate` int(11) NOT NULL,
+  `tstamp` int(11) NOT NULL,
+  `ip` varchar(39) NOT NULL DEFAULT '',
+  `temperature` int(11) NOT NULL,
+  `humidity` int(11) NOT NULL,
+  PRIMARY KEY (`uid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 

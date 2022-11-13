@@ -8,6 +8,7 @@
 
 namespace T3fx\Application\Weather\Controller;
 
+use T3fx\Application\Weather\Domain\Repository\IndoorWeatherIpcorrectionRepository;
 use T3fx\Application\Weather\Domain\Repository\IndoorWeatherIpsRepository;
 use T3fx\Application\Weather\Domain\Repository\IndoorWeatherRepository;
 use T3fx\Application\Weather\Domain\Repository\WeatherRepository;
@@ -32,15 +33,21 @@ class WeatherController extends AbstractActionController
     protected $indoorWeatherRepository;
 
     /**
+     * @var IndoorWeatherIpcorrectionRepository
+     */
+    protected $indoorWeatherIpcorrectionRepository;
+
+    /**
      * WeatherController constructor.
      */
     public function __construct()
     {
         defined('TABLE_PREFIX') or define('TABLE_PREFIX', 'tx_weather_domain_model_');
 
-        $this->WeatherRepository          = new WeatherRepository();
-        $this->indoorWeatherIpsRepository = new IndoorWeatherIpsRepository();
-        $this->indoorWeatherRepository    = new IndoorWeatherRepository();
+        $this->WeatherRepository                   = new WeatherRepository();
+        $this->indoorWeatherIpsRepository          = new IndoorWeatherIpsRepository();
+        $this->indoorWeatherRepository             = new IndoorWeatherRepository();
+        $this->indoorWeatherIpcorrectionRepository = new IndoorWeatherIpcorrectionRepository();
     }
 
     /**
@@ -89,8 +96,14 @@ class WeatherController extends AbstractActionController
         $ips = $this->indoorWeatherIpsRepository->findAll();
         if (is_iterable($ips)) {
             foreach ($ips as $ip) {
-                $url           = 'http://' . $ip["ip"] . '/json';
-                $indoorWeather = json_decode((string)\T3fx\Library\Connector\Http\Curl::Get($url), true);
+                $url = 'http://' . $ip["ip"] . '/json';
+                try {
+                    $indoorWeather = json_decode((string)\T3fx\Library\Connector\Http\Curl::Get($url), true);
+                } catch (\Exception $exception) {
+                    echo $exception->getMessage();
+                    continue;
+                }
+
                 if (is_array($indoorWeather)) {
                     $indoorWeather           = array_change_key_case($indoorWeather, CASE_LOWER);
                     $indoorWeather["ip"]     = $ip["uid"];
@@ -107,42 +120,62 @@ class WeatherController extends AbstractActionController
     public function showIndoorTemperatureAction()
     {
         $this->initView('Weather');
-        $weaterRecords     = $this->indoorWeatherRepository->findAll();
-        $temperatureData   = [];
-        $temperatureData[] = [
-            'Date',
-            'Office',
-            'Bedroom'
-        ];
 
-        $humidityData   = [];
-        $humidityData[] = [
-            'Date',
-            'Office',
-            'Bedroom'
-        ];
+        // At first create a mapping for the IPs and labels
+        $labels    = [0 => 'Date'];
+        $ipMapping = [];
+        $ips       = $this->indoorWeatherIpsRepository->findAll();
+        foreach ($ips as $ipRecord) {
+            $labels[$ipRecord["ip"]]     = $ipRecord["name"];
+            $ipMapping[$ipRecord["uid"]] = $ipRecord["ip"];
+        }
 
+        // Start the temperature and humidity records with labels as first row
+        $temperatureData = [$labels];
+        $humidityData    = [$labels];
+
+        // Create a mapping array between uid and IP for easy mapping
+        $idIpMapping = [];
+        foreach ($ips as $ip) {
+            $idIpMapping[$ip["uid"]] = $ip["ip"];
+        }
+
+        // Get all records from the DB
+        $weaterRecords      = $this->indoorWeatherRepository->findAll();
+        $weatherCorrections = $this->indoorWeatherIpcorrectionRepository->findAll();
+
+        // Replace int key with ip
+        foreach ($weatherCorrections as $key => $correction) {
+            $weatherCorrections[$ipMapping[$correction["ip"]]] = $correction;
+            unset($weatherCorrections[$key]);
+        }
+
+        // Now create all the weather records
         foreach ($weaterRecords as $weaterRecord) {
-            $crdata = date('Y-m-d H:i', $weaterRecord["crdate"]);
+            $correction = $weatherCorrections[$ipMapping[$weaterRecord["ip"]]];
+            $crdata     = date('Y-m-d H:i', $weaterRecord["crdate"]);
 
             // Create temperature records
-            $temperatureData[$crdata]                      = $temperatureData[$crdata] ?? [
-                    date(
-                        'd.m. H:i',
-                        $weaterRecord["crdate"]
-                    )
-                ];
-            $temperatureData[$crdata][$weaterRecord["ip"]] = (int)$weaterRecord["temperature"];
+            $temperatureData[$crdata]                                    = $temperatureData[$crdata] ?? [
+                date(
+                    'd.m. H:i',
+                    $weaterRecord["crdate"]
+                )
+            ];
+            $temperatureData[$crdata][$idIpMapping[$weaterRecord["ip"]]] = (int)$weaterRecord["temperature"] + (int)$correction["temperature"];
 
             // Create humidity records
-            $humidityData[$crdata]                      = $humidityData[$crdata] ?? [
-                    date(
-                        'd.m. H:i',
-                        $weaterRecord["crdate"]
-                    )
-                ];
-            $humidityData[$crdata][$weaterRecord["ip"]] = (int)$weaterRecord["humidity"];
+            $humidityData[$crdata]                                    = $humidityData[$crdata] ?? [
+                date(
+                    'd.m. H:i',
+                    $weaterRecord["crdate"]
+                )
+            ];
+            $humidityData[$crdata][$idIpMapping[$weaterRecord["ip"]]] = (int)$weaterRecord["humidity"] + (int)$correction["humidity"];
         }
+
+        $this->fillUpArrayHoles($humidityData);
+        $this->fillUpArrayHoles($temperatureData);
 
         // Sort them right
         ksort($temperatureData);
@@ -169,5 +202,30 @@ class WeatherController extends AbstractActionController
                 'humidityData'    => json_encode($cleanedHumidityData),
             ]
         );
+    }
+
+    /**
+     * Fill the holes in the array. Whatever that means
+     *
+     * @param $array
+     *
+     * @return void
+     */
+    protected function fillUpArrayHoles(&$array)
+    {
+        $keys       = array_keys(reset($array));
+        $lastValues = [];
+        foreach ($keys as $key) {
+            $lastValues[$key] = (int)$array[1][$key];
+        }
+
+        foreach ($array as $key => $value) {
+            foreach ($keys as $kKey) {
+                if (!isset($value[$kKey])) {
+                    $array[$key][$kKey] = $lastValues[$kKey];
+                }
+                $lastValues[$kKey] = $array[$key][$kKey];
+            }
+        }
     }
 }

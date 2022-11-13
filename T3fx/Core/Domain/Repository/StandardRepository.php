@@ -104,7 +104,7 @@ class StandardRepository extends \T3fx\Library\Database\Doctrine\DBAL
         $query->where('uid = ?');
         $query->setParameter(0, $uid);
 
-        return $query->execute()->fetchAssociative();
+        return $query->executeQuery()->fetchAssociative();
     }
 
     /**
@@ -118,7 +118,7 @@ class StandardRepository extends \T3fx\Library\Database\Doctrine\DBAL
         $query = $this->conn->createQueryBuilder();
         $query->select('*');
         $query->from($this->getTableName());
-        return $query->execute()->fetchAllAssociative();
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     /**

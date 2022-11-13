@@ -11,7 +11,7 @@ function drawChart() {
     data = google.visualization.arrayToDataTable(records);
 
     options = {
-        title: 'Office temperature',
+        title: 'Temperature',
         curveType: 'function',
         legend: {position: 'bottom'}
     };
@@ -23,7 +23,7 @@ function drawChart() {
     data = google.visualization.arrayToDataTable(records);
 
     options = {
-        title: 'Office humidity',
+        title: 'Humidity',
         curveType: 'function',
         legend: {position: 'bottom'}
     };
