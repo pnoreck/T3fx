@@ -104,7 +104,7 @@ class WeatherController extends AbstractActionController
                     continue;
                 }
 
-                if (is_array($indoorWeather)) {
+                if (is_array($indoorWeather) && $indoorWeather["temperature"] <= 100 && $indoorWeather["humidity"] <= 100) {
                     $indoorWeather           = array_change_key_case($indoorWeather, CASE_LOWER);
                     $indoorWeather["ip"]     = $ip["uid"];
                     $indoorWeather["crdate"] = time();
