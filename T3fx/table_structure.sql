@@ -2,9 +2,9 @@
 # T3fx table structure
 # ************************************************************
 
-# tx_t3fxmailscanner_domain_model_blacklist
+# tx_t3xmailscanner_domain_model_blacklist
 # ------------------------------------------------------------
-CREATE TABLE `tx_t3fxmailscanner_domain_model_blacklist` (
+CREATE TABLE `tx_t3xmailscanner_domain_model_blacklist` (
   `uid` int(11) NOT NULL AUTO_INCREMENT,
   `pid` int(11) NOT NULL DEFAULT 0,
   `mail` varchar(255) NOT NULL DEFAULT '',
@@ -22,9 +22,9 @@ CREATE TABLE `tx_t3fxmailscanner_domain_model_blacklist` (
 
 
 
-# tx_t3fxmailscanner_domain_model_content_filter
+# tx_t3xmailscanner_domain_model_content_filter
 # ------------------------------------------------------------
-CREATE TABLE `tx_t3fxmailscanner_domain_model_content_filter` (
+CREATE TABLE `tx_t3xmailscanner_domain_model_content_filter` (
   `uid` int(11) NOT NULL AUTO_INCREMENT,
   `pid` int(11) NOT NULL,
   `tstamp` int(11) NOT NULL,
@@ -43,9 +43,9 @@ CREATE TABLE `tx_t3fxmailscanner_domain_model_content_filter` (
 
 
 
-# tx_t3fxmailscanner_domain_model_imap_folder
+# tx_t3xmailscanner_domain_model_imap_folder
 # ------------------------------------------------------------
-CREATE TABLE `tx_t3fxmailscanner_domain_model_imap_folder` (
+CREATE TABLE `tx_t3xmailscanner_domain_model_imap_folder` (
   `uid` int(11) NOT NULL AUTO_INCREMENT,
   `pid` int(11) NOT NULL DEFAULT 0,
   `full_name` varchar(255) NOT NULL DEFAULT '',
@@ -65,9 +65,9 @@ CREATE TABLE `tx_t3fxmailscanner_domain_model_imap_folder` (
 
 
 
-# tx_t3fxmailscanner_domain_model_sender
+# tx_t3xmailscanner_domain_model_sender
 # ------------------------------------------------------------
-CREATE TABLE `tx_t3fxmailscanner_domain_model_sender` (
+CREATE TABLE `tx_t3xmailscanner_domain_model_sender` (
   `uid` int(11) NOT NULL AUTO_INCREMENT,
   `pid` int(11) NOT NULL DEFAULT 0,
   `name` varchar(255) NOT NULL DEFAULT '',
@@ -84,9 +84,9 @@ CREATE TABLE `tx_t3fxmailscanner_domain_model_sender` (
   KEY `name` (`name`,`deleted`,`hidden`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-# tx_t3fxmailscanner_domain_model_domain_whitelist
+# tx_t3xmailscanner_domain_model_domain_whitelist
 # ------------------------------------------------------------
-CREATE TABLE `tx_t3fxmailscanner_domain_model_whitelist` (
+CREATE TABLE `tx_t3xmailscanner_domain_model_whitelist` (
   `uid` int(11) NOT NULL AUTO_INCREMENT,
   `pid` int(11) NOT NULL DEFAULT 0,
   `name` varchar(255) NOT NULL DEFAULT '',
