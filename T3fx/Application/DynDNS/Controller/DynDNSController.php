@@ -83,13 +83,13 @@ class DynDNSController extends AbstractActionController
             if ($response->statusCode >= 200 && $response->statusCode < 300) {
                 $updateStatus = 'T3x-Status: ' . $response->getBody();
             }
-            $updateUrl = \T3fx\Config::getInstance()->getApplicationConfig('DynDNS', 'UpdateUrlHastaedt');
-            $updateUrl = str_replace('{new_ip}', $currentIP, $updateUrl);
-            /** @var Response $response */
-            $response = \T3fx\Library\Connector\Http\Curl::Get($updateUrl);
-            if ($response->statusCode >= 200 && $response->statusCode < 300) {
-                $updateStatus .= ' - hastaedt-Status: ' . $response->getBody();
-            }
+//            $updateUrl = \T3fx\Config::getInstance()->getApplicationConfig('DynDNS', 'UpdateUrlHastaedt');
+//            $updateUrl = str_replace('{new_ip}', $currentIP, $updateUrl);
+//            /** @var Response $response */
+//            $response = \T3fx\Library\Connector\Http\Curl::Get($updateUrl);
+//            if ($response->statusCode >= 200 && $response->statusCode < 300) {
+//                $updateStatus .= ' - hastaedt-Status: ' . $response->getBody();
+//            }
         }
 
         return [
