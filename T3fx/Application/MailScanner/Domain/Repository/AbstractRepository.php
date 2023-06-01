@@ -56,8 +56,6 @@ class AbstractRepository extends \T3fx\Domain\Repository\StandardRepository
                     'deleted'   => 0,
                     'tstamp'    => time(),
                     'crdate'    => time(),
-                    'starttime' => 0,
-                    'endtime'   => 0,
                 ],
                 $array
             )
