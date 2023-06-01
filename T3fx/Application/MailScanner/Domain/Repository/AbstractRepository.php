@@ -51,8 +51,7 @@ class AbstractRepository extends \T3fx\Domain\Repository\StandardRepository
             $this->getTableName(),
             array_merge(
                 [
-                    'pid'       => 46,
-                    'cruser_id' => 0,
+                    'pid'       => 2,
                     'hidden'    => 0,
                     'deleted'   => 0,
                     'tstamp'    => time(),
