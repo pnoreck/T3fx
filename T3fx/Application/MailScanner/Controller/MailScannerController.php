@@ -100,7 +100,7 @@ class MailScannerController extends AbstractActionController
     {
         $this->connectToMainMailbox();
         $this->sortMails();
-        $this->scanSpamBoxAction();
+        // $this->scanSpamBoxAction();
         $this->cleanupTemp();
     }
 
